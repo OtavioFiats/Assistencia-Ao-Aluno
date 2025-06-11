@@ -1,0 +1,115 @@
+/* Reset básico */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #f4f9ff;
+    color: #222;
+    padding: 2rem;
+}
+
+.titulo-lista {
+    font-size: 1.8rem;
+    color: #004080;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.linha-separadora {
+    border: 0;
+    height: 2px;
+    background: #0077cc;
+    margin: 0 auto 2rem auto;
+    width: 60%;
+}
+
+.tabela-container {
+    overflow-x: auto;
+    background-color: #fff;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.tabela-alunos {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 0.95rem;
+}
+
+.tabela-alunos thead {
+    background-color: #0077cc;
+    color: #fff;
+}
+
+.tabela-alunos th,
+.tabela-alunos td {
+    padding: 0.75rem;
+    border-bottom: 1px solid #ddd;
+}
+
+.tabela-alunos tbody tr:hover {
+    background-color: #f0f8ff;
+}
+
+.nenhum-registro {
+    text-align: center;
+    font-style: italic;
+    color: #777;
+    padding: 1rem;
+}
+
+.acoes {
+    white-space: nowrap;
+}
+
+.btn-editar,
+.btn-excluir {
+    text-decoration: none;
+    padding: 0.4rem 0.7rem;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    margin-right: 5px;
+    display: inline-block;
+    transition: all 0.3s ease;
+}
+
+.btn-editar {
+    background-color: #ffc107;
+    color: #000;
+}
+
+.btn-editar:hover {
+    background-color: #e0a800;
+}
+
+.btn-excluir {
+    background-color: #dc3545;
+    color: #fff;
+}
+
+.btn-excluir:hover {
+    background-color: #c82333;
+}
+
+.btn-voltar {
+    display: inline-block;
+    margin-top: 2rem;
+    padding: 0.6rem 1.2rem;
+    background-color: #0077cc;
+    color: #fff;
+    border-radius: 30px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background 0.3s ease;
+}
+
+.btn-voltar:hover {
+    background-color: #005fa3;
+}

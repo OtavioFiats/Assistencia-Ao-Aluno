@@ -1,0 +1,51 @@
+{% load static %}
+
+{% block titulo %}
+<title>Lista de Empréstimos</title>
+<link rel="shortcut icon" type="image/png" href="{% static 'img/logo.jpg' %}">
+
+{% endblock %}
+
+{% block css_extra %}
+<link rel="stylesheet" href="{% static 'css/cadastrar_aluno.css' %}">
+
+{% endblock %}
+
+{% block conteudo %}
+<h3 class="titulo-lista">💵 Lista de Empréstimos Registrados</h3>
+<hr class="linha-separadora">
+
+<div class="tabela-container">
+    <table class="tabela-alunos">
+        <thead>
+            <tr>
+                <th>Item e descrição</th>
+                <th>Data de Devolução</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for emprestimo in object_list %}
+            <tr>
+                <td>{{ emprestimo.descricao }}</td>
+                <td>{{ emprestimo.data|date:"d/m/Y" }}</td>
+                <td class="acoes">
+                    {% if emprestimo.pk %}
+                    <a href="{% url 'editar-emprestimo' emprestimo.pk %}" class="btn-editar" title="Editar">✏️</a>
+                    <a href="{% url 'excluir-emprestimo' emprestimo.pk %}" class="btn-excluir" title="Excluir">🗑️</a>
+                    {% else %}
+                    <span>Registro inválido</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3" class="nenhum-registro">Nenhum empréstimo registrado.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<a href="{% url 'menu-listas' %}" class="btn-voltar">&larr; Voltar para o Menu de Listas</a>
+{% endblock %}

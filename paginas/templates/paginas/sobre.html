@@ -1,0 +1,63 @@
+
+{% load static %}
+
+{% block titulo %}
+<title>Sobre o Sistema</title>
+{% endblock %}
+<link rel="shortcut icon" type="image/png" href="{% static 'img/logo.jpg' %}">
+{% block css_extra %}
+<link rel="stylesheet" href="{% static 'css/sobre.css' %}">
+{% endblock %}
+
+<div class="container py-4">
+    <div class="card custom-card shadow-lg border-0">
+        <div class="card-body p-5">
+            <h2 class="card-title text-center mb-4 text-success fw-bold">
+                Sistema de Empréstimos - Assistência ao Aluno
+            </h2>
+
+            <div class="imagem-container">
+                <img src="{% static 'img/caso.jpeg' %}" alt="Diagrama de Classes" class="img-quadrada">
+                <img src="{% static 'img/casos.jpeg' %}" alt="Diagrama de Casos de Uso" class="img-quadrada">
+            </div>
+
+            <p class="texto">
+                Este sistema foi desenvolvido como parte do Trabalho de Conclusão de Curso (TCC) dos estudantes
+                <strong>Ruan Soler Fontana</strong> e <strong>Otavio Augusto Fiats Ribeiro</strong>,
+                do <strong>Instituto Federal do Paraná – Campus Paranavaí</strong>, sob orientação do professor
+                <strong>Ayslan Trevizan Possebom</strong>.
+            </p>
+
+            <p class="texto">
+                O objetivo do projeto é informatizar e otimizar o processo de empréstimo de materiais e equipamentos
+                esportivos disponibilizados pela <strong>Assistência ao Aluno</strong>. O sistema propõe a substituição
+                do controle manual em papel por uma plataforma web moderna, segura e eficiente.
+            </p>
+
+            <p class="texto">
+                Por meio do sistema, alunos e servidores poderão visualizar os itens disponíveis, solicitar empréstimos,
+                registrar devoluções, e realizar confirmações com <strong>leitura de QR Code</strong>
+                e <strong>assinatura digital</strong>. Isso aumenta a rastreabilidade, a segurança e a praticidade no
+                dia a dia da instituição.
+            </p>
+
+            <p class="texto">
+                O projeto emprega tecnologias como <strong>Python/Django, HTML5, CSS3, JavaScript e MySQL</strong>,
+                utilizando <strong>ORM</strong> para garantir desempenho e confiabilidade.
+            </p>
+
+            <p class="texto">
+                O sistema é fruto de uma metodologia de pesquisa aplicada com entrevistas, levantamento documental e
+                bibliográfico, com potencial de ser adotado por outros campi do IFPR.
+            </p>
+
+            <div class="text-center mt-5">
+                <a href="{% url 'index' %}" class="btn btn-outline-success btn-lg rounded-pill px-4">
+                    ← Voltar ao Início
+                </a>
+            </div>
+
+            <hr class="my-4">
+        </div>
+    </div>
+</div>

@@ -1,0 +1,25 @@
+{% load static %}
+
+{% block titulo %}
+<title>Menu de Cadastros</title>
+{% endblock %}
+
+{% block conteudo %}
+<!-- Importa o CSS exclusivo para a página de cadastro -->
+<link rel="stylesheet" href="{% static 'css/pagina_cadastro.css' %}">
+<link rel="shortcut icon" type="image/png" href="{% static 'img/logo.jpg' %}">
+
+<main class="container">
+    <h3 class="titulo">Bem-vindo ao Menu de Cadastros</h3>
+    <p class="subtitulo">Escolha uma das opções abaixo para iniciar um novo cadastro no sistema.</p>
+
+    <div class="menu-botoes">
+        <a href="{% url 'cadastrar-aluno' %}" class="botao">Cadastrar Aluno</a>
+        <a href="{% url 'cadastrar-servidor' %}" class="btn btn-success btn-lg rounded-pill w-100">Cadastrar
+            Servidor</a>
+        <a href="{% url 'cadastrar-emprestimo' %}" class="botao">Cadastrar Empréstimo</a>
+    </div>
+
+    <a href="{% url 'index' %}" class="voltar">&larr; Voltar ao Início</a>
+</main>
+{% endblock %}

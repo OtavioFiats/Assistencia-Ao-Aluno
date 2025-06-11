@@ -1,0 +1,50 @@
+{% load static %}
+{% block titulo %}
+<title>Lista de Servidores</title>
+<link rel="shortcut icon" type="image/png" href="{% static 'img/logo.jpg' %}">
+
+{% endblock %}
+
+{% block css_extra %}
+<link rel="stylesheet" href="{% static 'css/cadastrar_aluno.css' %}">
+
+{% endblock %}
+
+{% block conteudo %}
+<h3 class="titulo-lista">👨‍🏫 Lista de Servidores Registrados</h3>
+<hr class="linha-separadora">
+
+<div class="tabela-container">
+    <table class="tabela-alunos">
+        <thead>
+            <tr>
+                <th>SIAPE</th>
+                <th>Nome</th>
+                <th>Telefone</th>
+                <th>Email</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for servidor in object_list %}
+            <tr>
+                <td>{{ servidor.siape }}</td>
+                <td>{{ servidor.nome }}</td>
+                <td>{{ servidor.fone }}</td>
+                <td>{{ servidor.email }}</td>
+                <td class="acoes">
+                    <a href="{% url 'editar-servidor' servidor.pk %}" class="btn-editar" title="Editar">✏️</a>
+                    <a href="{% url 'excluir-servidor' servidor.pk %}" class="btn-excluir" title="Excluir">🗑️</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="nenhum-registro">Nenhum servidor registrado.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<a href="{% url 'menu-listas' %}" class="btn-voltar">&larr; Voltar para o Menu de Listas</a>
+{% endblock %}

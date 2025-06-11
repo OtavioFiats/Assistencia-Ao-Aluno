@@ -1,0 +1,40 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Menu de Listas</title>
+    <link rel="shortcut icon" type="image/png" href="{% static 'img/logo.jpg' %}">
+    <link rel="stylesheet" href="{% static 'css/menudelistas.css' %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+    <main class="container py-5">
+        <h2 class="titulo-menu">Menu de Listas</h2>
+        <p class="subtitulo-menu">Registros</p>
+
+        <div class="card-container">
+
+            <div class="card-menu">
+                <h5>👩‍🎓 Alunos</h5>
+                <a href="{% url 'listar-aluno' %}">Ver Lista</a>
+            </div>
+
+            <div class="card-menu">
+                <h5>👨‍🏫 Servidores</h5>
+                <a href="{% url 'listar-servidor' %}">Ver Lista</a>
+            </div>
+
+            <div class="card-menu">
+                <h5>💵 Emprestimo</h5>
+                <a href="{% url 'listar-emprestimo' %}">Ver Lista</a>
+            </div>
+        </div>
+
+        <a href="{% url 'index' %}" class="btn-voltar">&larr; Voltar ao Início</a>
+    </main>
+</body>
+
+</html>
