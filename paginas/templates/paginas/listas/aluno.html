@@ -1,20 +1,12 @@
+{% extends "paginas/modelo.html" %}
 {% load static %}
-{% block titulo %}
-<title>Lista de Alunos</title>
-<link rel="shortcut icon" type="image/png" href="{% static 'img/logo.jpg' %}">
-
-{% endblock %}
-
-{% block css_extra %}
-<link rel="stylesheet" href="{% static 'css/cadastrar_aluno.css' %}">
-{% endblock %}
 
 {% block conteudo %}
-<h3 class="titulo-lista">📚 Lista de Alunos Registrados</h3>
-<hr class="linha-separadora">
+<h3 class="text-center">📚 Lista de Alunos Registrados</h3>
+<hr>
 
-<div class="tabela-container">
-    <table class="tabela-alunos">
+<div class="">
+    <table class="table table-striped">
         <thead>
             <tr>
                 <th>RA</th>
@@ -27,6 +19,7 @@
                 <th>CPF</th>
                 <th>Cidade</th>
                 <th>Data de Nasc.</th>
+                <th>Opções</th>
             </tr>
         </thead>
         <tbody>
@@ -43,8 +36,8 @@
                 <td>{{ aluno.cidade }}</td>
                 <td>{{ aluno.data_nasc|date:"d/m/Y" }}</td>
                 <td class="acoes">
-                    <a href="{% url 'editar-aluno' aluno.pk %}" class="btn-editar" title="Editar">✏️</a>
-                    <a href="{% url 'excluir-aluno' aluno.pk %}" class="btn-excluir" title="Excluir">🗑️</a>
+                    <a href="{% url 'editar-aluno' aluno.pk %}" class="btn btn-sm btn-outline-secondary" title="Editar">✏️</a>
+                    <a href="{% url 'excluir-aluno' aluno.pk %}" class="btn btn-sm btn-outline-danger" title="Excluir">🗑️</a>
                 </td>
             </tr>
             {% empty %}

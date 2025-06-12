@@ -7,24 +7,29 @@
 {% endblock %}
 
 {% block conteudo %}
-<link rel="stylesheet" href="{% static 'css/estilo.css' %}">
 
-<!-- Logo fixa no canto superior esquerdo -->
-<div class="logo-fixed">
-    <img src="{% static 'img/ifpr.png' %}" alt="Logo IFPR">
-</div>
+<div class="row g-3">
 
-<div class="container">
-    <h1>Sistema Assistência ao Aluno</h1>
-    <p>Facilitando o controle de empréstimos no IFPR - Campus Paranavaí com praticidade e organização.</p>
-
-    <div class="buttons">
-        <a href="{% url 'sobre' %}" class="btn">Sobre o Sistema</a>
-        <a href="{% url 'menu' %}" class="btn">Menu de Cadastros</a>
-        <a href="{% url 'menu-listas' %}" class="btn">Menu de Listas</a>
+    <div class="col-lg-3 col-md-4">
+        <div class="row g-3">
+            <div class="col-lg-12 col-md-12 wow zoomIn text-end" data-wow-delay="0.1s">
+                <img src="{% static 'img/site_antigo/ifpr.png' %}" alt="Logo IFPR" height="100">
+            </div>
+        </div>
     </div>
 
-    <!-- Nome centralizado abaixo dos botões -->
-    <p class="autor">© 2025 Otavio Fiats e Ruan Fontana | Todos os direitos reservados</p>
+    <div class="col-lg-9 col-md-6 wow zoomIn text-start" data-wow-delay="0.7s" style="min-height: 350px;">
+
+        <p>Facilitando o controle de empréstimos no IFPR - Campus Paranavaí com praticidade e organização.</p>
+
+        <div class="">
+            <a href="{% url 'sobre' %}" class="btn">Sobre o Sistema</a>
+            <a href="{% url 'menu' %}" class="btn">Menu de Cadastros</a>
+            <a href="{% url 'menu-listas' %}" class="btn">Menu de Listas</a>
+        </div>
+
+
+    </div>
 </div>
+
 {% endblock %}

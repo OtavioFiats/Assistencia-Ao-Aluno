@@ -1,21 +1,12 @@
+{% extends "paginas/modelo.html" %}
 {% load static %}
-{% block titulo %}
-<title>Lista de Servidores</title>
-<link rel="shortcut icon" type="image/png" href="{% static 'img/logo.jpg' %}">
-
-{% endblock %}
-
-{% block css_extra %}
-<link rel="stylesheet" href="{% static 'css/cadastrar_aluno.css' %}">
-
-{% endblock %}
 
 {% block conteudo %}
-<h3 class="titulo-lista">👨‍🏫 Lista de Servidores Registrados</h3>
-<hr class="linha-separadora">
+<h3 class="text-center">👨‍🏫 Lista de Servidores Registrados</h3>
+<hr>
 
-<div class="tabela-container">
-    <table class="tabela-alunos">
+<div class="">
+    <table class="table table-striped">
         <thead>
             <tr>
                 <th>SIAPE</th>

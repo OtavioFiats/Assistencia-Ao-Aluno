@@ -1,26 +1,17 @@
 
+{% extends "paginas/modelo.html" %}
 {% load static %}
 
-{% block titulo %}
-<title>Cadastrar</title>
-<link rel="shortcut icon" type="image/png" href="{% static 'img/logo.jpg' %}">
 
-{% endblock %}
-
-{% block css_extra %}
-<link rel="stylesheet" href="{% static 'css/formulario.css' %}">
-{% endblock %}
-
-<center>
-<h1>Cadastro</h1>
-</center>
 {% block conteudo %}
-<div class="form-container">
+
+<div class="">
     <form method="POST" action="">
         {% csrf_token %}
         {{ form.as_p }}
 
-        <button type="submit">Cadastrar</button>
+        <button type="submit" class="btn btn-success">{{botao}}</button>
     </form>
 </div>
+
 {% endblock %}
