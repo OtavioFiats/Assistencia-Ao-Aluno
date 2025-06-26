@@ -40,7 +40,15 @@ INSTALLED_APPS = [
     
     # MEUS APPS ATIVADOS (Ativa o app criado)
     "paginas.apps.PaginasConfig",
+    
+    # Complementos
+    "crispy_forms",
+    "crispy_bootstrap5",
+    
 ]
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -129,3 +137,10 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+#Configuração Login
+
+LOGIN_REDIRECT_URL = 'index'
+LOGIN_URL = 'login'
+LOGOUT_REDIRECT_URL = 'login'

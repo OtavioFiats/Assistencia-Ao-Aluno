@@ -1,17 +1,23 @@
 
 {% extends "paginas/modelo.html" %}
+
 {% load static %}
 
+{% load crispy_forms_tags %}
 
 {% block conteudo %}
 
-<div class="">
-    <form method="POST" action="">
-        {% csrf_token %}
-        {{ form.as_p }}
+<div class="row g-3 justify-content-center">
+    <div class="col-lg-6 col-md-6">
 
-        <button type="submit" class="btn btn-success">{{botao}}</button>
-    </form>
+        <form method="POST" action="">
+            {% csrf_token %}
+            
+            {{ form|crispy }}
+
+            <button type="submit" class="btn btn-success">{{botao}}</button>
+        </form>
+    </div>
 </div>
 
 {% endblock %}

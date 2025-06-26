@@ -6,8 +6,25 @@ from .views import (
     EmprestimoDelete, AlunoDelete, ServidorDelete,
     EmprestimoList, AlunoList, ServidorList
 )
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
+    
+    #Rota para pagina de Login
+    path("login/", auth_views.LoginView.as_view(
+        template_name='paginas/form.html',
+        extra_context={'titulo': 'Autenticação', 'botao': 'Entrar'}
+        ), name="login"),
+    
+    path("senha/", auth_views.PasswordChangeView.as_view(
+        template_name='paginas/form.html',
+        extra_context={'titulo': 'Atualizar Senha', 'botao': 'Salvar'}
+    ), name="senha"),
+
+    # Rota para pagina de Logout
+    path("sair/", auth_views.LogoutView.as_view(), name="Logout"),
+
+    
     path('', IndexView.as_view(), name="index"),
     path('sobre/', SobreView.as_view(), name="sobre"),
     path('menu/', MenuView.as_view(), name="menu"),
