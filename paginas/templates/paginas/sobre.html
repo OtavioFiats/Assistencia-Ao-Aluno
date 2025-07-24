@@ -4,10 +4,12 @@
 {% block titulo %}
 <title>Sobre o Sistema</title>
 {% endblock %}
-<link rel="shortcut icon" type="image/png" href="{% static 'img/logo.jpg' %}">
+
 {% block css_extra %}
+<link rel="shortcut icon" type="image/png" href="{% static 'img/logo.jpg' %}">
 {% endblock %}
 
+{% block conteudo %}
 <div class="container py-4">
     <div class="card custom-card shadow-lg border-0">
         <div class="card-body p-5">
@@ -60,3 +62,4 @@
         </div>
     </div>
 </div>
+{% endblock %}

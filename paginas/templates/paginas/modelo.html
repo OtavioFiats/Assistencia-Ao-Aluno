@@ -45,14 +45,14 @@
 
     <!-- Navbar Start -->
     <nav class="navbar navbar-expand-lg bg-white navbar-light shadow sticky-top p-0">
-        <a href="index.html" class="navbar-brand d-flex align-items-center px-4 px-lg-5">
-            <h2 class="m-0 text-primary"><i class="fa fa-book me-3"></i>Assistencia Ao Aluno</h2>
-        </a>
-        <button type="button" class="navbar-toggler me-4" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarCollapse">
-            <div class="navbar-nav ms-auto p-4 p-lg-0">
+    <a href="{% url 'index' %}" class="navbar-brand d-flex align-items-center px-4 px-lg-5">
+        <h2 class="m-0 text-primary"><i class="fa fa-book me-3"></i>Assistência Ao Aluno</h2>
+    </a>
+    <button type="button" class="navbar-toggler me-4" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+        <div class="navbar-nav ms-auto p-4 p-lg-0">
 
                 <a href="{% url "index" %}" class="nav-item nav-link active">Home</a>
 
@@ -79,8 +79,6 @@
 
                 {% endif %}
 
-                <a href="#" class="nav-item nav-link">Contato</a>
-
             </div>
             {% if not request.user.is_authenticated %}
             <a href="{% url "login" %}" class="btn btn-primary py-4 px-lg-5 d-none d-lg-block">Entrar<i class="fa fa-arrow-right ms-3"></i></a>
@@ -103,9 +101,9 @@
                         <div class="row justify-content-start">
                             <div class="col-sm-10 col-lg-8">
 <h5 class="text-primary text-uppercase mb-3 animated slideInDown">Otimização de tempo</h5>
-                                <h1 class="display-3 text-white animated slideInDown">Site de emrpestimos da Assitencia Ao Aluno</h1>
-                                <a href="" class="btn btn-primary py-md-3 px-md-5 me-3 animated slideInLeft">Cadastro novo</a>
-                                <a href="" class="btn btn-light py-md-3 px-md-5 animated slideInRight">Listas</a>
+                                <h1 class="display-3 text-white animated slideInDown">Site de empréstimo da Assistencia Ao Aluno</h1>
+                                <a href="{% url "cadastrar-servidor" %}" class="btn btn-primary py-md-3 px-md-5 me-3 animated slideInLeft">Cadastro Servidor</a>
+                                <a href="{% url "listar-servidor" %}" class="btn btn-light py-md-3 px-md-5 animated slideInRight">Listas</a>
                             </div>
                         </div>
                     </div>
@@ -118,9 +116,9 @@
                         <div class="row justify-content-start">
                             <div class="col-sm-10 col-lg-8">
                                 <h5 class="text-primary text-uppercase mb-3 animated slideInDown">Otimização de tempo</h5>
-                                <h1 class="display-3 text-white animated slideInDown">Site de emrpestimos da Assitencia Ao Aluno</h1>
-                                <a href="" class="btn btn-primary py-md-3 px-md-5 me-3 animated slideInLeft">Sobre</a>
-                                <a href="" class="btn btn-light py-md-3 px-md-5 animated slideInRight">Login</a>
+                                <h1 class="display-3 text-white animated slideInDown">Site de empréstimo da Assitencia Ao Aluno</h1>
+                                <a href="{% url "sobre" %}" class="btn btn-primary py-md-3 px-md-5 me-3 animated slideInLeft">Sobre</a>
+                                <a href="{% url "login" %}" class="btn btn-light py-md-3 px-md-5 animated slideInRight">Login</a>
                             </div>
                         </div>
                     </div>
@@ -170,7 +168,7 @@
             <div class="row g-5">
                 <div class="col-lg-3 col-md-6">
                     <h4 class="text-white mb-3">Clique Aqui</h4>
-                    <a class="btn btn-link" href="">Sobre</a>
+              <a class="btn btn-link" href="{% url 'sobre' %}">Sobre</a>
                     <a class="btn btn-link" href="">Contato>
                     <a class="btn btn-link" href="">Termos e condição</a>
                     <a class="btn btn-link" href="">Ajuda</a>
