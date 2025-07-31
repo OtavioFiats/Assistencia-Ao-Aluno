@@ -12,7 +12,7 @@ urlpatterns = [
     
     #Rota para pagina de Login
     path("login/", auth_views.LoginView.as_view(
-        template_name='paginas/form.html',
+        template_name='paginas/login.html',
         extra_context={'titulo': 'Autenticação', 'botao': 'Entrar'}
         ), name="login"),
     

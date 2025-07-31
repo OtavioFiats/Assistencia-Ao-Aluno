@@ -3,6 +3,8 @@ from django.views.generic import TemplateView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
 from .models import Emprestimo, Aluno, Servidor
+from django.contrib.auth.views import LoginView
+from django.contrib.auth.forms import AuthenticationForm
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 
@@ -29,7 +31,7 @@ class EmprestimoCreate(LoginRequiredMixin , CreateView):
 class AlunoCreate(LoginRequiredMixin, CreateView):
     template_name = 'paginas/form.html'
     model = Aluno
-    fields = ['ra', 'nome', 'endereco', 'fone', 'email', 'curso', 'ano', 'cpf', 'cidade', 'data_nasc']
+    fields = ['ra', 'nome', 'endereco', 'fone', 'curso', 'ano', 'cpf', 'cidade', 'data_nasc']
     success_url = reverse_lazy('listar-aluno')
     extra_context = {'titulo': 'Cadastro de alunos', 'botao': 'Salvar'}
 
@@ -37,7 +39,7 @@ class AlunoCreate(LoginRequiredMixin, CreateView):
 class ServidorCreate(LoginRequiredMixin, CreateView):
     template_name = 'paginas/form.html'
     model = Servidor
-    fields = ['siape', 'nome', 'fone', 'email']
+    fields = ['siape', 'nome', 'fone']
     success_url = reverse_lazy('listar-servidor')
     extra_context = {'titulo': 'Cadastro de Servidor', 'botao': 'Salvar'}
 
@@ -97,3 +99,8 @@ class AlunoList(LoginRequiredMixin, ListView):
 class ServidorList(LoginRequiredMixin, ListView):
     model = Servidor
     template_name = "paginas/listas/servidor.html"
+
+class MeuLoginView(LoginView):
+    template_name = 'login.html'
+    authentication_form = AuthenticationForm
+    extra_context = {'botao': 'Entrar', 'titulo': 'Login'}
