@@ -4,7 +4,9 @@ from .views import (
     EmprestimoCreate, AlunoCreate, ServidorCreate,
     EmprestimoUpdate, AlunoUpdate, ServidorUpdate,
     EmprestimoDelete, AlunoDelete, ServidorDelete,
-    EmprestimoList, AlunoList, ServidorList
+    EmprestimoList, AlunoList, ServidorList,
+
+    EmprestimoUpdateConfirmacao,EmprestimoDetailView
 )
 from django.contrib.auth import views as auth_views
 
@@ -36,6 +38,7 @@ urlpatterns = [
     path('cadastrar/servidor/', ServidorCreate.as_view(), name="cadastrar-servidor"),
     
     path('editar/emprestimo/<int:pk>/', EmprestimoUpdate.as_view(), name="editar-emprestimo"),
+    path('confirmar/emprestimo/<int:pk>/', EmprestimoUpdateConfirmacao.as_view(), name="confirmar-emprestimo"),
     path('editar/aluno/<int:pk>/', AlunoUpdate.as_view(), name="editar-aluno"),
     path('editar/servidor/<int:pk>/', ServidorUpdate.as_view(), name="editar-servidor"),
 
@@ -47,4 +50,7 @@ urlpatterns = [
     path('listar/emprestimo/', EmprestimoList.as_view(), name="listar-emprestimo"),
     path('listar/aluno/', AlunoList.as_view(), name="listar-aluno"),
     path('listar/servidor/', ServidorList.as_view(), name="listar-servidor"),
+
+    path('detalhes/emprestimo/<int:pk>/', EmprestimoDetailView.as_view(), name="detalhes-emprestimo"),
+    
 ]

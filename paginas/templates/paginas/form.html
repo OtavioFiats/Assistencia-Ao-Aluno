@@ -15,6 +15,11 @@
             
             {{ form|crispy }}
 
+
+            {% if emprestimo %}
+            <h3>{{emprestimo}}</h3>
+            {% endif %}
+
             <button type="submit" class="btn btn-success">{{botao}}</button>
         </form>
     </div>

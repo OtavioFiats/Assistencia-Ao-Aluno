@@ -9,20 +9,29 @@
     <table class="table table-striped">
         <thead>
             <tr>
+                <th>Aluno</th>
                 <th>Item e descrição</th>
+                <th>Data</th>
                 <th>Data de Devolução</th>
+                <th>Aprovado</th>
+                <th>Data de confirmação</th>
                 <th>Ações</th>
             </tr>
         </thead>
         <tbody>
             {% for emprestimo in object_list %}
             <tr>
+                <td>{{ emprestimo.aluno }}</td>
                 <td>{{ emprestimo.descricao }}</td>
                 <td>{{ emprestimo.data|date:"d/m/Y" }}</td>
+                <td>{{ emprestimo.data_devolucao|date:"d/m/Y" }}</td>
+                <td>{{ emprestimo.aluno_confirmacao }}</td>
+                <td>{{ emprestimo.aluno_data_confirmacao|date:"d/m/Y" }}</td>
                 <td class="acoes">
                     {% if emprestimo.pk %}
                     <a href="{% url 'editar-emprestimo' emprestimo.pk %}" class="btn-editar" title="Editar">✏️</a>
                     <a href="{% url 'excluir-emprestimo' emprestimo.pk %}" class="btn-excluir" title="Excluir">🗑️</a>
+                    <a href="{% url 'detalhes-emprestimo' emprestimo.pk %}" class="" title="Excluir">Confirmar</a>
                     {% else %}
                     <span>Registro inválido</span>
                     {% endif %}

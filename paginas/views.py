@@ -8,6 +8,9 @@ from django.contrib.auth.forms import AuthenticationForm
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 
+from datetime import timedelta
+from django.utils import timezone
+
 class IndexView(TemplateView):
     template_name = "paginas/index.html"
 
@@ -23,9 +26,16 @@ class MenuListasView(TemplateView):
 class EmprestimoCreate(LoginRequiredMixin , CreateView):
     template_name = 'paginas/form.html'
     model = Emprestimo
-    fields = ['descricao', 'data']
+    fields = ['descricao', 'data', 'aluno']
     success_url = reverse_lazy('listar-emprestimo')
     extra_context = {'titulo': 'Cadastro de Empréstimo', 'botao': 'Salvar'}
+
+    def form_valid(self, form):
+        form.instance.servidor = self.request.user.servidor
+        # A data de devolução é a data + 7 dias
+        form.instance.data_devolucao = form.instance.data + timedelta(days=7)
+
+        return super().form_valid(form)
 
 
 class AlunoCreate(LoginRequiredMixin, CreateView):
@@ -47,9 +57,29 @@ class ServidorCreate(LoginRequiredMixin, CreateView):
 class EmprestimoUpdate(LoginRequiredMixin, UpdateView):
     template_name = 'paginas/form.html'
     model = Emprestimo
-    fields = ['descricao', 'data', 'emprestado']
+    fields = ['descricao', 'emprestado', 'aluno']
     success_url = reverse_lazy('listar-emprestimo')
     extra_context = {'titulo': 'Atualização de Empréstimo', 'botao': 'Salvar'}
+
+
+
+class EmprestimoUpdateConfirmacao(LoginRequiredMixin, UpdateView):
+    template_name = 'paginas/form.html'
+    model = Emprestimo
+    fields = []
+    success_url = reverse_lazy('listar-emprestimo')
+    extra_context = {'titulo': 'Confirmação de Empréstimo', 'botao': 'Confirmar'}
+
+    def form_valid(self, form):
+        form.instance.aluno_confirmacao = True
+        # Confirmação é agora
+        form.instance.aluno_data_confirmacao = timezone.now()
+        return super().form_valid(form)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['emprestimo'] = self.object
+        return context
 
 
 class AlunoUpdate(LoginRequiredMixin, UpdateView):
@@ -63,7 +93,7 @@ class AlunoUpdate(LoginRequiredMixin, UpdateView):
 class ServidorUpdate(LoginRequiredMixin, UpdateView):
     template_name = 'paginas/form.html'
     model = Servidor
-    fields = ['siape', 'nome', 'fone', 'email', ]
+    fields = ['siape', 'nome', 'fone', 'endereco', 'cidade', 'tipo']
     success_url = reverse_lazy('listar-servidor')
     extra_context = {'titulo': 'Atualização de Servidor', 'botao': 'Salvar'}
 
@@ -104,3 +134,21 @@ class MeuLoginView(LoginView):
     template_name = 'login.html'
     authentication_form = AuthenticationForm
     extra_context = {'botao': 'Entrar', 'titulo': 'Login'}
+
+class EmprestimoDetailView(LoginRequiredMixin, TemplateView):
+    template_name = 'paginas/emprestimo_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        emprestimo_id = self.kwargs.get('pk')
+        emprestimo = Emprestimo.objects.get(pk=emprestimo_id)
+        context['emprestimo'] = emprestimo
+        #pwga a url e cria o caminho para confimar o emprestimo
+        context['url'] = reverse_lazy('confirmar-emprestimo', kwargs={'pk': emprestimo_id})
+        context['return_url'] = self.request.META.get('HTTP_REFERER', reverse_lazy('listar-emprestimo'))
+        if 'return_url' not in context:
+            context['return_url'] = reverse_lazy('listar-emprestimo')
+        if 'url' not in context:
+            context['url'] = self.request.META.get('HTTP_REFERER', reverse_lazy('listar-emprestimo'))
+        context['url']
+        return context    

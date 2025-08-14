@@ -2,40 +2,61 @@
 {% load static %}
 
 {% block conteudo %}
+
+
+
 <h3 class="text-center">👨‍🏫 Lista de Servidores Registrados</h3>
 <hr>
 
-<div class="">
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>SIAPE</th>
-                <th>Nome</th>
-                <th>Telefone</th>
-                <th>Email</th>
-                <th>Ações</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for servidor in object_list %}
-            <tr>
-                <td>{{ servidor.siape }}</td>
-                <td>{{ servidor.nome }}</td>
-                <td>{{ servidor.fone }}</td>
-                <td>{{ servidor.email }}</td>
-                <td class="acoes">
-                    <a href="{% url 'editar-servidor' servidor.pk %}" class="btn-editar" title="Editar">✏️</a>
-                    <a href="{% url 'excluir-servidor' servidor.pk %}" class="btn-excluir" title="Excluir">🗑️</a>
-                </td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="5" class="nenhum-registro">Nenhum servidor registrado.</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<div class="row">
+  {% for servidor in object_list %}
+  <div class="col-xl-6 mb-4">
+    <div class="card">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+          <div class="d-flex align-items-center">
+
+            <div class="ms-3">
+             <p class="fw-bold mb-1">Nome : {{ servidor.nome }}</p>
+             Fone : <p class="text-muted mb-0">{{ servidor.fone }}</p>
+             Cidade :  <p class="text-muted mb-0">{{ servidor.cidade }}</p>
+             Endereço :   <p class="text-muted mb-0">{{ servidor.endereco }}</p>
+             Tipo :   <p class="text-muted mb-0">{{ servidor.tipo }}</p>
+            </div>
+          </div>
+          <span class="badge rounded-pill badge-success">Ativo</span> <!-- Substitua se tiver status -->
+        </div>
+      </div>
+      <div
+        class="card-footer border-0 bg-body-tertiary p-2 d-flex justify-content-around"
+      >
+        <a
+          class="btn btn-link m-0 text-reset"
+          href="{% url 'editar-servidor' servidor.pk %}"
+          role="button"
+        >
+          Editar <i class="fas fa-pen ms-2"></i>
+        </a>
+        <a
+          class="btn btn-link m-0 text-reset"
+          href="{% url 'excluir-servidor' servidor.pk %}"
+          role="button"
+        >
+          Excluir <i class="fas fa-trash ms-2"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+  {% empty %}
+  <div class="col-12 text-center">
+    <p>Nenhum servidor registrado.</p>
+  </div>
+  {% endfor %}
 </div>
 
-<a href="{% url 'menu-listas' %}" class="btn-voltar">&larr; Voltar para o Menu de Listas</a>
+<a href="{% url 'menu-listas' %}" class="btn btn-secondary mt-4">&larr; Voltar para o Menu de Listas</a>
+
+<!-- Scripts do MDBootstrap, se necessário -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
+
 {% endblock %}

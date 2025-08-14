@@ -1,13 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-class Emprestimo(models.Model):
-    descricao = models.CharField(max_length=250)
-    data = models.DateField()
-    emprestado = models.BooleanField(default=False) 
-    
-    def __str__(self):
-        return f"{self.descricao} ({self.data.strftime('%d/%m/%Y')})"
 
 class Aluno(models.Model):
     ra = models.PositiveIntegerField(unique=True, verbose_name="RA")
@@ -25,6 +18,7 @@ class Aluno(models.Model):
     def __str__(self):
         return f"{self.nome} (RA: {self.ra})"
 
+
 class Servidor(models.Model):
     siape = models.PositiveIntegerField(unique=True, verbose_name="SIAPE")
     nome = models.CharField(max_length=100, verbose_name="Nome")
@@ -36,3 +30,20 @@ class Servidor(models.Model):
 
     def __str__(self):
         return f"{self.nome} (SIAPE: {self.siape})"
+
+
+class Emprestimo(models.Model):
+    descricao = models.CharField(max_length=250)
+    data = models.DateField()
+    emprestado = models.BooleanField(default=True) 
+
+    data_devolucao = models.DateField()
+    aluno = models.ForeignKey(Aluno, on_delete=models.CASCADE, related_name='emprestimos')
+    aluno_confirmacao = models.BooleanField(default=False)
+    aluno_data_confirmacao = models.DateTimeField(null=True, blank=True)
+
+    servidor = models.ForeignKey(Servidor, on_delete=models.CASCADE)
+    
+    def __str__(self):
+        return f"{self.descricao} ({self.data.strftime('%d/%m/%Y')})"
+    
