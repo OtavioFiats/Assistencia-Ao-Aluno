@@ -47,3 +47,4 @@ class Emprestimo(models.Model):
     def __str__(self):
         return f"{self.descricao} ({self.data.strftime('%d/%m/%Y')})"
     
+    

@@ -10,6 +10,30 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 from datetime import timedelta
 from django.utils import timezone
+from django.contrib.auth.models import User, Group
+from .forms import UsuarioCadastroForm
+
+
+# Crie a view no final do arquivo ou em outro local que faça sentido
+class CadastroUsuarioView(CreateView):
+    model = User
+    # Não tem o fields, pois ele é definido no forms.py
+    form_class = UsuarioCadastroForm
+    # Pode utilizar o seu form padrão
+    template_name = 'paginas/form.html'
+    success_url = reverse_lazy('login')
+    extra_context = {'titulo': 'Cadastro de usuario', 'botao': 'Salvar'}
+
+
+    def form_valid(self, form):
+        # Faz o comportamento padrão do form_valid
+        url = super().form_valid(form)
+        # Busca ou cria um grupo com esse nome
+        grupo, criado = Group.objects.get_or_create(name='Estudante')
+        # Acessa o objeto criado e adiciona o usuário no grupo acima
+        self.object.groups.add(grupo)
+        # Retorna a URL de sucesso
+        return url
 
 class IndexView(TemplateView):
     template_name = "paginas/index.html"
@@ -88,8 +112,7 @@ class AlunoUpdate(LoginRequiredMixin, UpdateView):
     fields = ['ra', 'nome', 'endereco', 'fone', 'email', 'curso', 'ano', 'cpf',  'cidade', 'data_nasc']
     success_url = reverse_lazy('listar-aluno')
     extra_context = {'titulo': 'Atualização de alunos', 'botao': 'Salvar'}
-
-
+  
 class ServidorUpdate(LoginRequiredMixin, UpdateView):
     template_name = 'paginas/form.html'
     model = Servidor
@@ -152,3 +175,5 @@ class EmprestimoDetailView(LoginRequiredMixin, TemplateView):
             context['url'] = self.request.META.get('HTTP_REFERER', reverse_lazy('listar-emprestimo'))
         context['url']
         return context    
+    
+    

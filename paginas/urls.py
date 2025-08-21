@@ -9,9 +9,13 @@ from .views import (
     EmprestimoUpdateConfirmacao,EmprestimoDetailView
 )
 from django.contrib.auth import views as auth_views
+from .views import CadastroUsuarioView
 
 urlpatterns = [
     
+    #criar uma rota "registrar" para o cadastro de usuários
+    path("registrar/", CadastroUsuarioView.as_view(), name="registrar"),
+
     #Rota para pagina de Login
     path("login/", auth_views.LoginView.as_view(
         template_name='paginas/login.html',
@@ -52,5 +56,9 @@ urlpatterns = [
     path('listar/servidor/', ServidorList.as_view(), name="listar-servidor"),
 
     path('detalhes/emprestimo/<int:pk>/', EmprestimoDetailView.as_view(), name="detalhes-emprestimo"),
+
+
+    path("registrar/", CadastroUsuarioView.as_view(), name="registrar"),
+
     
 ]
