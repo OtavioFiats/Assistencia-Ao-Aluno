@@ -119,7 +119,7 @@ class ServidorUpdate(LoginRequiredMixin, UpdateView):
     fields = ['siape', 'nome', 'fone', 'endereco', 'cidade', 'tipo']
     success_url = reverse_lazy('listar-servidor')
     extra_context = {'titulo': 'Atualização de Servidor', 'botao': 'Salvar'}
-
+    
 
 class EmprestimoDelete(LoginRequiredMixin, DeleteView):
     model = Emprestimo
@@ -144,6 +144,15 @@ class EmprestimoList(LoginRequiredMixin, ListView):
     template_name = "paginas/listas/emprestimo.html"
 
 
+class MeuEmprestimoList(LoginRequiredMixin, ListView):
+    model = Emprestimo
+    template_name = "paginas/listas/emprestimo.html" 
+
+    # Filtra os empréstimos para mostrar apenas os do aluno logado
+    def get_queryset(self):
+        return Emprestimo.objects.filter(aluno__usuario=self.request.user)  
+
+
 class AlunoList(LoginRequiredMixin, ListView):
     model = Aluno
     template_name = "paginas/listas/aluno.html"
@@ -153,6 +162,8 @@ class ServidorList(LoginRequiredMixin, ListView):
     model = Servidor
     template_name = "paginas/listas/servidor.html"
 
+
+ 
 class MeuLoginView(LoginView):
     template_name = 'login.html'
     authentication_form = AuthenticationForm

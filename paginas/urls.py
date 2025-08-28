@@ -60,5 +60,7 @@ urlpatterns = [
 
     path("registrar/", CadastroUsuarioView.as_view(), name="registrar"),
 
+    path("listar/minhas-solicitacoes/", MinhaSolicitacoes.as_view(), name="minhas-solicitacoes"),
+
     
 ]
