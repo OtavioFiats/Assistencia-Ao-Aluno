@@ -11,29 +11,109 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from datetime import timedelta
 from django.utils import timezone
 from django.contrib.auth.models import User, Group
-from .forms import UsuarioCadastroForm
+from .forms import  AlunoCadastroForm, ServidorCadastroForm
+from django.http import HttpResponseForbidden
+from django import forms
 
 
 # Crie a view no final do arquivo ou em outro local que faça sentido
-class CadastroUsuarioView(CreateView):
+class CadastroAlunoView(CreateView):
     model = User
     # Não tem o fields, pois ele é definido no forms.py
-    form_class = UsuarioCadastroForm
+    form_class = AlunoCadastroForm
     # Pode utilizar o seu form padrão
     template_name = 'paginas/form.html'
     success_url = reverse_lazy('login')
-    extra_context = {'titulo': 'Cadastro de usuario', 'botao': 'Salvar'}
+    extra_context = {'titulo': 'Cadastro de aluno', 'botao': 'cadastrar'}
 
 
     def form_valid(self, form):
+        ra = self.cleaned_data.get('ra')
+        ano = self.cleaned_data.get('ano')
+        data_nasc = self.cleaned_data.get('data_nasc')
+        endereco = self.cleaned_data.get('endereco')
+        fone = self.cleaned_data.get('fone')
+        curso = self.cleaned_data.get('curso')
+        cpf = self.cleaned_data.get('cpf')
+        cidade = self.cleaned_data.get('cidade')
+        nome = self.cleaned_data.get('nome')
+        
         # Faz o comportamento padrão do form_valid
         url = super().form_valid(form)
         # Busca ou cria um grupo com esse nome
         grupo, criado = Group.objects.get_or_create(name='Estudante')
         # Acessa o objeto criado e adiciona o usuário no grupo acima
         self.object.groups.add(grupo)
+
+        try:
+            # Cria o aluno associado ao usuário criado
+            Aluno.objects.create(
+                ra=ra,
+                nome=nome,
+                endereco=endereco,
+                fone=fone,
+                curso=curso,
+                ano=ano,
+                cpf=cpf,
+                cidade=cidade,
+                data_nasc=data_nasc,
+                usuario=self.object
+            )
+        except Exception as e:
+            # Se der algum erro, deleta o usuário criado e mostra o erro
+            self.object.delete()
+            form.add_error(None, f"Erro ao criar aluno: {e}")
+            return super().form_invalid(form)
+        
         # Retorna a URL de sucesso
         return url
+
+
+class CadastroServidorView(CreateView):
+    model = User
+    # Não tem o fields, pois ele é definido no forms.py
+    form_class = ServidorCadastroForm
+    # Pode utilizar o seu form padrão
+    template_name = 'paginas/form.html'
+    success_url = reverse_lazy('login')
+    extra_context = {'titulo': 'Cadastro de servidor', 'botao': 'cadastrar'}
+
+    def form_valid(self, form):
+        siape = self.cleaned_data.get('siape')
+        nome = self.cleaned_data.get('nome')
+        fone = self.cleaned_data.get('fone')
+        endereco = self.cleaned_data.get('endereco')
+        cidade = self.cleaned_data.get('cidade')
+        tipo = self.cleaned_data.get('tipo')
+        
+        # Faz o comportamento padrão do form_valid
+        url = super().form_valid(form)
+        # Busca ou cria um grupo com esse nome
+        grupo, criado = Group.objects.get_or_create(name='Servidor')
+        # Acessa o objeto criado e adiciona o usuário no grupo acima
+        self.object.groups.add(grupo)
+
+        try:
+            # Cria o aluno associado ao usuário criado
+            Servidor.objects.create(
+                siape=siape,
+                nome=nome,
+                fone=fone,
+                endereco=endereco,
+                cidade=cidade,
+                tipo=tipo,
+                usuario=self.object
+            )
+        except Exception as e:
+            # Se der algum erro, deleta o usuário criado e mostra o erro
+            self.object.delete()
+            form.add_error(None, f"Erro ao criar servidor: {e}")
+            return super().form_invalid(form)
+        
+        # Retorna a URL de sucesso
+        return url
+
+
 
 class IndexView(TemplateView):
     template_name = "paginas/index.html"
@@ -53,6 +133,16 @@ class EmprestimoCreate(LoginRequiredMixin , CreateView):
     fields = ['descricao', 'data', 'aluno']
     success_url = reverse_lazy('listar-emprestimo')
     extra_context = {'titulo': 'Cadastro de Empréstimo', 'botao': 'Salvar'}
+
+    def get_form(self, *args, **kwargs):
+        form = super().get_form(*args, **kwargs)
+        form.fields['aluno'].queryset = Aluno.objects.all()
+        return form
+
+    def dispatch(self, request, *args, **kwargs):
+        if not hasattr(request.user, 'servidor'):
+            return HttpResponseForbidden("Apenas servidores podem acessar esta página.")
+        return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
         form.instance.servidor = self.request.user.servidor
@@ -150,7 +240,9 @@ class MeuEmprestimoList(LoginRequiredMixin, ListView):
 
     # Filtra os empréstimos para mostrar apenas os do aluno logado
     def get_queryset(self):
-        return Emprestimo.objects.filter(aluno__usuario=self.request.user)  
+        if hasattr(self.request.user, 'aluno'):
+            return Emprestimo.objects.filter(aluno__usuario=self.request.user)
+        return Emprestimo.objects.none()
 
 
 class AlunoList(LoginRequiredMixin, ListView):
@@ -185,6 +277,9 @@ class EmprestimoDetailView(LoginRequiredMixin, TemplateView):
         if 'url' not in context:
             context['url'] = self.request.META.get('HTTP_REFERER', reverse_lazy('listar-emprestimo'))
         context['url']
-        return context    
-    
-    
+        return context
+
+from django.views.generic import TemplateView
+
+class EscolherCadastroView(TemplateView):
+    template_name = "paginas/escolher_cadastro.html"

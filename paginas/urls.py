@@ -6,15 +6,16 @@ from .views import (
     EmprestimoDelete, AlunoDelete, ServidorDelete,
     EmprestimoList, AlunoList, ServidorList,
 
-    EmprestimoUpdateConfirmacao,EmprestimoDetailView
+    EmprestimoUpdateConfirmacao,EmprestimoDetailView, MeuEmprestimoList,
+    EscolherCadastroView, CadastroAlunoView, CadastroServidorView
 )
 from django.contrib.auth import views as auth_views
-from .views import CadastroUsuarioView
+# from .views import CadastroUsuarioView
 
 urlpatterns = [
     
     #criar uma rota "registrar" para o cadastro de usuários
-    path("registrar/", CadastroUsuarioView.as_view(), name="registrar"),
+    # path("registrar/", CadastroUsuarioView.as_view(), name="registrar"),
 
     #Rota para pagina de Login
     path("login/", auth_views.LoginView.as_view(
@@ -36,7 +37,6 @@ urlpatterns = [
     path('menu/', MenuView.as_view(), name="menu"),
     path('menu/listas/', MenuListasView.as_view(), name="menu-listas"),
 
-
     path('cadastrar/emprestimo/', EmprestimoCreate.as_view(), name="cadastrar-emprestimo"),
     path('cadastrar/aluno/', AlunoCreate.as_view(), name="cadastrar-aluno"),
     path('cadastrar/servidor/', ServidorCreate.as_view(), name="cadastrar-servidor"),
@@ -57,10 +57,9 @@ urlpatterns = [
 
     path('detalhes/emprestimo/<int:pk>/', EmprestimoDetailView.as_view(), name="detalhes-emprestimo"),
 
+    path("listar/meus-emprestimos/", MeuEmprestimoList.as_view(), name="meus-emprestimos"),
 
-    path("registrar/", CadastroUsuarioView.as_view(), name="registrar"),
-
-    path("listar/minhas-solicitacoes/", MinhaSolicitacoes.as_view(), name="minhas-solicitacoes"),
-
-    
+    path("escolher-cadastro/", EscolherCadastroView.as_view(), name="escolher-cadastro"),
+    path("cadastro/aluno/", CadastroAlunoView.as_view(), name="cadastro-aluno"),
+    path("cadastro/servidor/", CadastroServidorView.as_view(), name="cadastro-servidor"),
 ]

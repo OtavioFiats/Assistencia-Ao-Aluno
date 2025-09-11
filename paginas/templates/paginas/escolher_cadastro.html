@@ -1,0 +1,12 @@
+{% extends "paginas/modelo.html" %}
+
+{% block conteudo %}
+<div class="container text-center mt-5">
+    <h1>Escolha o Tipo de Cadastro</h1>
+    <p>Selecione se deseja cadastrar um Aluno ou um Servidor.</p>
+    <div class="mt-4">
+        <a href="{% url 'cadastro-aluno' %}" class="btn btn-primary btn-lg">Cadastrar Aluno</a>
+        <a href="{% url 'cadastro-servidor' %}" class="btn btn-secondary btn-lg">Cadastrar Servidor</a>
+    </div>
+</div>
+{% endblock %}

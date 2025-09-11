@@ -1,4 +1,3 @@
-
 {% extends "paginas/modelo.html" %}
 
 {% load static %}
@@ -24,5 +23,62 @@
         </form>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const tipoUsuarioField = document.querySelector('[name="tipo_usuario"]');
+        const servidorFields = document.querySelectorAll('.servidor-field');
+
+        function toggleServidorFields() {
+            const isServidor = tipoUsuarioField.value === 'servidor';
+            servidorFields.forEach(field => {
+                const formGroup = field.closest('.form-group');
+                if (formGroup) {
+                    formGroup.style.display = isServidor ? '' : 'none';
+                }
+            });
+        }
+
+        tipoUsuarioField.addEventListener('change', toggleServidorFields);
+        toggleServidorFields(); // Inicializa o estado correto
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const alunoField = document.querySelector('[name="aluno"]');
+        const alunoInfo = document.createElement('div');
+        alunoInfo.style.marginTop = '10px';
+        alunoField.closest('.form-group').appendChild(alunoInfo);
+
+        function updateAlunoInfo() {
+            const selectedOption = alunoField.options[alunoField.selectedIndex];
+            if (selectedOption && selectedOption.value) {
+                alunoInfo.textContent = `Aluno Selecionado: ${selectedOption.text}`;
+            } else {
+                alunoInfo.textContent = '';
+            }
+        }
+
+        alunoField.addEventListener('change', updateAlunoInfo);
+        updateAlunoInfo(); // Inicializa com o valor atual
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const alunoField = document.querySelector('[name="aluno"]');
+        const searchInput = document.createElement('input');
+        searchInput.type = 'text';
+        searchInput.placeholder = 'Pesquisar aluno...';
+        searchInput.classList.add('form-control');
+        searchInput.style.marginBottom = '10px';
+        alunoField.closest('.form-group').insertBefore(searchInput, alunoField);
+
+        searchInput.addEventListener('input', function () {
+            const searchTerm = searchInput.value.toLowerCase();
+            Array.from(alunoField.options).forEach(option => {
+                const text = option.text.toLowerCase();
+                option.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        });
+    });
+</script>
 
 {% endblock %}
