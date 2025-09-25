@@ -1,0 +1,90 @@
+:root {
+    --azul-principal: #1e90ff;
+    --azul-hover: #1c7ed6;
+    --cinza-borda: #dcdcdc;
+    --fundo-pagina: #f5f7fa;
+    --texto-principal: #1c1c1c;
+    --texto-suave: #6c757d;
+    --branco: #ffffff;
+    --sombra: 0 8px 24px rgba(0, 0, 0, 0.08);
+    --borda-arredondada: 12px;
+    --fonte: 'Segoe UI', 'Poppins', sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--fonte);
+    background-color: var(--fundo-pagina);
+    color: var(--texto-principal);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+
+main.container {
+    background-color: var(--branco);
+    padding: 3rem 2rem;
+    border-radius: var(--borda-arredondada);
+    box-shadow: var(--sombra);
+    text-align: center;
+    width: 100%;
+    max-width: 500px;
+}
+
+h3 {
+    font-size: 1.8rem;
+    margin-bottom: 0.8rem;
+}
+
+p {
+    font-size: 1rem;
+    color: var(--texto-suave);
+    margin-bottom: 2rem;
+}
+
+/* Botões */
+.menu-botoes {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    margin-bottom: 2rem;
+}
+
+.menu-botoes a {
+    background-color: var(--azul-principal);
+    color: var(--branco);
+    padding: 0.9rem 1.5rem;
+    border: none;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1rem;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: var(--sombra);
+}
+
+.menu-botoes a:hover {
+    background-color: var(--azul-hover);
+    transform: translateY(-2px);
+}
+
+a.voltar {
+    display: inline-block;
+    margin-top: 1.5rem;
+    color: var(--azul-principal);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+a.voltar:hover {
+    color: var(--azul-hover);
+    text-decoration: underline;
+}
