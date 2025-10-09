@@ -7,7 +7,8 @@ from .views import (
     EmprestimoList, AlunoList, ServidorList,
 
     EmprestimoUpdateConfirmacao,EmprestimoDetailView, MeuEmprestimoList,
-    EscolherCadastroView, CadastroAlunoView, CadastroServidorView
+    EscolherCadastroView, CadastroAlunoView, CadastroServidorView,
+    EmprestimoQRCodeView, EmprestimoConfirmarQRView
 )
 from django.contrib.auth import views as auth_views
 # from .views import CadastroUsuarioView
@@ -29,7 +30,7 @@ urlpatterns = [
     ), name="senha"),
 
     # Rota para pagina de Logout
-    path("sair/", auth_views.LogoutView.as_view(), name="Logout"),
+    path("sair/", auth_views.LogoutView.as_view(), name="logout"),
 
     
     path('', IndexView.as_view(), name="index"),
@@ -62,4 +63,7 @@ urlpatterns = [
     path("escolher-cadastro/", EscolherCadastroView.as_view(), name="escolher-cadastro"),
     path("cadastro/aluno/", CadastroAlunoView.as_view(), name="cadastro-aluno"),
     path("cadastro/servidor/", CadastroServidorView.as_view(), name="cadastro-servidor"),
+
+    path('emprestimo/<int:pk>/qrcode/', EmprestimoQRCodeView.as_view(), name='emprestimo-qrcode'),
+    path('emprestimo/<int:pk>/confirmar-qr/', EmprestimoConfirmarQRView.as_view(), name='confirmar-emprestimo-qr'),
 ]

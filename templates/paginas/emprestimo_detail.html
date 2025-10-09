@@ -1,0 +1,32 @@
+{% extends 'paginas/modelo.html' %}
+{% block conteudo %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">Detalhes do Empréstimo</h3>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Descrição: {{ emprestimo.descricao }}</h5>
+                    <p class="card-text">Data do Empréstimo: {{ emprestimo.data|date:'d/m/Y' }}</p>
+                    <p class="card-text">Data de Devolução: {{ emprestimo.data_devolucao|date:'d/m/Y' }}</p>
+                    <p class="card-text">Aluno: <strong>{{ emprestimo.aluno.nome }}</strong></p>
+                    <p class="card-text">Status: {% if emprestimo.aluno_confirmacao %}<span class="badge bg-success">Confirmado</span>{% else %}<span class="badge bg-warning text-dark">Pendente</span>{% endif %}</p>
+                </div>
+                <div class="card-footer text-center">
+                    {% if not emprestimo.aluno_confirmacao %}
+                        <form method="post" action="{% url 'confirmar-emprestimo' emprestimo.id %}" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success">Confirmar empréstimo</button>
+                        </form>
+                        <a href="{% url 'emprestimo-qrcode' emprestimo.id %}" class="btn btn-primary ms-2">Gerar QR Code para confirmação</a>
+                    {% else %}
+                        <div class="alert alert-success mb-0">Empréstimo já confirmado!</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

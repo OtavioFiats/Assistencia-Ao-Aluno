@@ -14,7 +14,11 @@ from django.contrib.auth.models import User, Group
 from .forms import  AlunoCadastroForm, ServidorCadastroForm
 from django.http import HttpResponseForbidden
 from django import forms
-
+from django.contrib import messages
+import qrcode
+import base64
+from django.http import HttpResponse
+from django.shortcuts import redirect, render
 
 # Crie a view no final do arquivo ou em outro local que faça sentido
 class CadastroAlunoView(CreateView):
@@ -28,15 +32,15 @@ class CadastroAlunoView(CreateView):
 
 
     def form_valid(self, form):
-        ra = self.cleaned_data.get('ra')
-        ano = self.cleaned_data.get('ano')
-        data_nasc = self.cleaned_data.get('data_nasc')
-        endereco = self.cleaned_data.get('endereco')
-        fone = self.cleaned_data.get('fone')
-        curso = self.cleaned_data.get('curso')
-        cpf = self.cleaned_data.get('cpf')
-        cidade = self.cleaned_data.get('cidade')
-        nome = self.cleaned_data.get('nome')
+        ra = form.cleaned_data.get('ra')
+        ano = form.cleaned_data.get('ano')
+        data_nasc = form.cleaned_data.get('data_nasc')
+        endereco = form.cleaned_data.get('endereco')
+        fone = form.cleaned_data.get('fone')
+        curso = form.cleaned_data.get('curso')
+        cpf = form.cleaned_data.get('cpf')
+        cidade = form.cleaned_data.get('cidade')
+        nome = form.cleaned_data.get('nome')
         
         # Faz o comportamento padrão do form_valid
         url = super().form_valid(form)
@@ -79,12 +83,12 @@ class CadastroServidorView(CreateView):
     extra_context = {'titulo': 'Cadastro de servidor', 'botao': 'cadastrar'}
 
     def form_valid(self, form):
-        siape = self.cleaned_data.get('siape')
-        nome = self.cleaned_data.get('nome')
-        fone = self.cleaned_data.get('fone')
-        endereco = self.cleaned_data.get('endereco')
-        cidade = self.cleaned_data.get('cidade')
-        tipo = self.cleaned_data.get('tipo')
+        siape = form.cleaned_data.get('siape')
+        nome = form.cleaned_data.get('nome')
+        fone = form.cleaned_data.get('fone')
+        endereco = form.cleaned_data.get('endereco')
+        cidade = form.cleaned_data.get('cidade')
+        tipo = form.cleaned_data.get('tipo')
         
         # Faz o comportamento padrão do form_valid
         url = super().form_valid(form)
@@ -184,15 +188,30 @@ class EmprestimoUpdateConfirmacao(LoginRequiredMixin, UpdateView):
     success_url = reverse_lazy('listar-emprestimo')
     extra_context = {'titulo': 'Confirmação de Empréstimo', 'botao': 'Confirmar'}
 
+    def dispatch(self, request, *args, **kwargs):
+        emprestimo = self.get_object()
+        # Permite confirmação tanto pelo aluno quanto pelo servidor
+        if not (hasattr(request.user, 'aluno') and emprestimo.aluno.usuario == request.user) and not hasattr(request.user, 'servidor'):
+            return HttpResponseForbidden("Apenas aluno ou servidor podem confirmar este empréstimo.")
+        # Se já confirmado, redireciona
+        if emprestimo.aluno_confirmacao:
+            messages.info(request, "Empréstimo já confirmado!")
+            return super().form_invalid(self.get_form())
+        return super().dispatch(request, *args, **kwargs)
+
     def form_valid(self, form):
         form.instance.aluno_confirmacao = True
-        # Confirmação é agora
+        form.instance.emprestado = True
         form.instance.aluno_data_confirmacao = timezone.now()
-        return super().form_valid(form)
-    
+        messages.success(self.request, "Empréstimo confirmado com sucesso!")
+        # Não chama o super().form_valid(form) para não salvar duas vezes
+        form.save()
+        return redirect('emprestimo-qrcode', pk=self.object.pk)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['emprestimo'] = self.object
+        context['ja_confirmado'] = self.object.aluno_confirmacao
         return context
 
 
@@ -232,6 +251,8 @@ class ServidorDelete(LoginRequiredMixin, DeleteView):
 class EmprestimoList(LoginRequiredMixin, ListView):
     model = Emprestimo
     template_name = "paginas/listas/emprestimo.html"
+    paginate_by = 10
+    context_object_name = 'emprestimos'
 
 
 class MeuEmprestimoList(LoginRequiredMixin, ListView):
@@ -248,11 +269,13 @@ class MeuEmprestimoList(LoginRequiredMixin, ListView):
 class AlunoList(LoginRequiredMixin, ListView):
     model = Aluno
     template_name = "paginas/listas/aluno.html"
+    paginate_by = 10
 
 
 class ServidorList(LoginRequiredMixin, ListView):
     model = Servidor
     template_name = "paginas/listas/servidor.html"
+    paginate_by = 10
 
 
  
@@ -278,6 +301,48 @@ class EmprestimoDetailView(LoginRequiredMixin, TemplateView):
             context['url'] = self.request.META.get('HTTP_REFERER', reverse_lazy('listar-emprestimo'))
         context['url']
         return context
+
+class EmprestimoQRCodeView(LoginRequiredMixin, TemplateView):
+    template_name = 'paginas/emprestimo_qrcode.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        emprestimo_id = self.kwargs.get('pk')
+        emprestimo = Emprestimo.objects.get(pk=emprestimo_id)
+        url = self.request.build_absolute_uri(
+            reverse_lazy('confirmar-emprestimo-qr', kwargs={'pk': emprestimo_id})
+        )
+        qr = qrcode.make(url)
+        import io
+        buf = io.BytesIO()
+        qr.save(buf, format='PNG')
+        image_stream = buf.getvalue()
+        qr_code_base64 = base64.b64encode(image_stream).decode('utf-8')
+        context['qr_code_base64'] = qr_code_base64
+        context['emprestimo_id'] = emprestimo_id
+        context['url'] = url
+        context['emprestimo'] = emprestimo
+        return context
+
+from django.views import View
+class EmprestimoConfirmarQRView(View):
+    def get(self, request, pk):
+        if not request.user.is_authenticated:
+            return redirect(f"{reverse_lazy('login')}?next={reverse_lazy('confirmar-emprestimo-qr', kwargs={'pk': pk})}")
+        from .models import Emprestimo
+        emprestimo = Emprestimo.objects.get(pk=pk)
+        # Só o aluno do empréstimo pode confirmar
+        if not hasattr(request.user, 'aluno') or emprestimo.aluno.usuario != request.user:
+            messages.error(request, "Apenas o aluno responsável pode confirmar este empréstimo.")
+            return HttpResponseForbidden("Apenas o aluno responsável pode confirmar este empréstimo.")
+        if emprestimo.aluno_confirmacao:
+            messages.info(request, "Empréstimo já confirmado!")
+            return render(request, 'paginas/emprestimo_confirmado_sucesso.html')
+        emprestimo.aluno_confirmacao = True
+        emprestimo.aluno_data_confirmacao = timezone.now()
+        emprestimo.save()
+        messages.success(request, "Empréstimo confirmado com sucesso!")
+        return render(request, 'paginas/emprestimo_confirmado_sucesso.html')
 
 from django.views.generic import TemplateView
 

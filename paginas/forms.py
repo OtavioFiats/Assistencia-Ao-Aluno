@@ -75,6 +75,20 @@ class AlunoCadastroForm(UserCreationForm):
             raise forms.ValidationError("Este email já está em uso.")
         return email
 
+    def clean_cpf(self):
+        cpf = self.cleaned_data.get('cpf')
+        import re
+        if not re.match(r'\d{3}\.\d{3}\.\d{3}-\d{2}', cpf):
+            raise forms.ValidationError('CPF deve estar no formato 000.000.000-00')
+        return cpf
+
+    def clean_fone(self):
+        fone = self.cleaned_data.get('fone')
+        import re
+        if not re.match(r'^\(?\d{2}\)?[\s-]?\d{4,5}-\d{4}$', fone):
+            raise forms.ValidationError('Telefone inválido')
+        return fone
+
 class ServidorCadastroForm(UserCreationForm):
     email = forms.EmailField(required=True, help_text="Informe um email válido.")
 
@@ -124,4 +138,4 @@ class ServidorCadastroForm(UserCreationForm):
         # Verifica se já existe algum usuário com este email
         if User.objects.filter(email=email).exists():
             raise forms.ValidationError("Este email já está em uso.")
-        return email   
+        return email

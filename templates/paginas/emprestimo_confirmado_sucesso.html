@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block titulo %}Empréstimo Confirmado{% endblock %}
+
+{% block conteudo %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card text-center">
+                <div class="card-header">
+                    <h2>Empréstimo Confirmado com Sucesso!</h2>
+                </div>
+                <div class="card-body">
+                    <p class="lead">O empréstimo foi confirmado com sucesso.</p>
+                    <p>Obrigado por utilizar nosso sistema.</p>
+                    <a href="{% url 'index' %}" class="btn btn-primary">Voltar para a página inicial</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
