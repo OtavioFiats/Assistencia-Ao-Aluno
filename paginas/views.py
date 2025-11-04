@@ -268,12 +268,13 @@ class EmprestimoList(LoginRequiredMixin, ListView):
 
 class MeuEmprestimoList(LoginRequiredMixin, ListView):
     model = Emprestimo
-    template_name = "paginas/listas/emprestimo.html" 
+    template_name = "paginas/listas/emprestimo.html"
+    context_object_name = 'emprestimos' 
 
     # Filtra os empréstimos para mostrar apenas os do aluno logado
     def get_queryset(self):
         if hasattr(self.request.user, 'aluno'):
-            return Emprestimo.objects.filter(aluno__usuario=self.request.user)
+            return Emprestimo.objects.filter(aluno=self.request.user.aluno)
         return Emprestimo.objects.none()
 
 
@@ -354,6 +355,27 @@ class EmprestimoConfirmarQRView(View):
         emprestimo.save()
         messages.success(request, "Empréstimo confirmado com sucesso!")
         return render(request, 'paginas/emprestimo_confirmado_sucesso.html')
+
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404
+
+@login_required
+def confirmar_devolucao(request, pk):
+    if not hasattr(request.user, 'servidor'):
+        messages.error(request, "Apenas servidores podem realizar esta ação.")
+        return redirect('listar-emprestimo')
+
+    emprestimo = get_object_or_404(Emprestimo, pk=pk)
+
+    if emprestimo.confirmacao_devolucao:
+        messages.info(request, "A devolução deste item já foi confirmada.")
+    else:
+        emprestimo.confirmacao_devolucao = True
+        emprestimo.save()
+        messages.success(request, "Devolução confirmada com sucesso!")
+
+    return redirect('listar-emprestimo')
+
 
 from django.views.generic import TemplateView
 

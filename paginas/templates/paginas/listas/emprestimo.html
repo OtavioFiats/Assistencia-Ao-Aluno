@@ -1,50 +1,70 @@
-{% extends "paginas/modelo.html" %}
-{% load static %}
-
+{% extends 'paginas/modelo.html' %}
 {% block conteudo %}
-<h3 class="text-center">💵 Lista de Empréstimos Registrados</h3>
-<hr>
-
-<div class="">
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Aluno</th>
-                <th>Item e descrição</th>
-                <th>Data</th>
-                <th>Data de Devolução</th>
-                <th>Aprovado</th>
-                <th>Data de confirmação</th>
-                <th>Ações</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for emprestimo in object_list %}
-            <tr>
-                <td>{{ emprestimo.aluno }}</td>
-                <td>{{ emprestimo.descricao }}</td>
-                <td>{{ emprestimo.data|date:"d/m/Y" }}</td>
-                <td>{{ emprestimo.data_devolucao|date:"d/m/Y" }}</td>
-                <td>{{ emprestimo.aluno_confirmacao }}</td>
-                <td>{{ emprestimo.aluno_data_confirmacao|date:"d/m/Y" }}</td>
-                <td class="acoes">
-                    {% if emprestimo.pk %}
-                    <a href="{% url 'editar-emprestimo' emprestimo.pk %}" class="btn-editar" title="Editar">✏️</a>
-                    <a href="{% url 'excluir-emprestimo' emprestimo.pk %}" class="btn-excluir" title="Excluir">🗑️</a>
-                    <a href="{% url 'detalhes-emprestimo' emprestimo.pk %}" class="" title="Excluir">Confirmar</a>
-                    {% else %}
-                    <span>Registro inválido</span>
+<div class="container py-5">
+    <h2 class="mb-4">
+        {% if request.user.aluno %}
+            Meus Empréstimos
+        {% else %}
+            Lista de Empréstimos
+        {% endif %}
+    </h2>
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    {% if request.user.servidor %}
+                        <th>Aluno</th>
                     {% endif %}
-                </td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="3" class="nenhum-registro">Nenhum empréstimo registrado.</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+                    <th>Descrição</th>
+                    <th>Data do Empréstimo</th>
+                    <th>Data de Devolução</th>
+                    <th>Aprovado</th>
+                    <th>Devolução Confirmada</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for emprestimo in object_list %}
+                <tr>
+                    <td>{{ emprestimo.id }}</td>
+                    {% if request.user.servidor %}
+                        <td>{{ emprestimo.aluno.nome }}</td>
+                    {% endif %}
+                    <td>{{ emprestimo.descricao }}</td>
+                    <td>{{ emprestimo.data|date:'d/m/Y' }}</td>
+                    <td>{{ emprestimo.data_devolucao|date:'d/m/Y' }}</td>
+                    <td>{% if emprestimo.aluno_confirmacao %}Sim{% else %}Não{% endif %}</td>
+                    <td>{% if emprestimo.confirmacao_devolucao %}Sim{% else %}Não{% endif %}</td>
+                    <td>
+                        {% if request.user.servidor %}
+                            <a href="{% url 'detalhes-emprestimo' emprestimo.id %}" class="btn btn-info btn-sm">Detalhes</a>
+                            <a href="{% url 'editar-emprestimo' emprestimo.id %}" class="btn btn-warning btn-sm">Editar</a>
+                            <a href="{% url 'excluir-emprestimo' emprestimo.id %}" class="btn btn-danger btn-sm" onclick="return confirm('Tem certeza que deseja excluir este empréstimo?');">Excluir</a>
+                            {% if emprestimo.aluno_confirmacao and not emprestimo.confirmacao_devolucao %}
+                                <a href="{% url 'confirmar-devolucao' emprestimo.id %}" class="btn btn-success btn-sm">Confirmar Devolução</a>
+                            {% endif %}
+                        {% elif request.user.aluno %}
+                            {% if not emprestimo.aluno_confirmacao %}
+                                <a href="{% url 'emprestimo-qrcode' emprestimo.id %}" class="btn btn-primary btn-sm">Confirmar Empréstimo</a>
+                            {% else %}
+                                <span class="text-muted">Nenhuma ação disponível</span>
+                            {% endif %}
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="{% if request.user.servidor %}8{% else %}7{% endif %}" class="text-center">Nenhum empréstimo encontrado.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% if request.user.servidor %}
+    <div class="mt-4 text-end">
+        <a href="{% url 'cadastrar-emprestimo' %}" class="btn btn-primary">Novo Empréstimo</a>
+    </div>
+    {% endif %}
 </div>
-
-<a href="{% url 'menu-listas' %}" class="btn-voltar">&larr; Voltar para o Menu de Listas</a>
 {% endblock %}

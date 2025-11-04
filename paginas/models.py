@@ -42,6 +42,7 @@ class Emprestimo(models.Model):
     aluno_data_confirmacao = models.DateTimeField(null=True, blank=True)
 
     servidor = models.ForeignKey(Servidor, on_delete=models.CASCADE)
+    confirmacao_devolucao = models.BooleanField(default=False)
     
     def __str__(self):
         return f"{self.descricao} ({self.data.strftime('%d/%m/%Y')})"

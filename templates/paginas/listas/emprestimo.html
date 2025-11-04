@@ -12,6 +12,7 @@
                     <th>Data do Empréstimo</th>
                     <th>Data de Devolução</th>
                     <th>Aprovado</th>
+                    <th>Devolução Confirmada</th>
                     <th>Ações</th>
                 </tr>
             </thead>
@@ -25,24 +26,41 @@
                     <td>{{ emprestimo.data_devolucao|date:'d/m/Y' }}</td>
                     <td>{% if emprestimo.aluno_confirmacao %}Sim{% else %}Não{% endif %}</td>
                     <td>
+                        {% if emprestimo.confirmacao_devolucao %}
+                            Sim
+                        {% else %}
+                            Não
+                        {% endif %}
+                    </td>
+                    <td>
                         <a href="{% url 'detalhes-emprestimo' emprestimo.id %}" class="btn btn-info btn-sm">Detalhes</a>
-                        <a href="{% url 'editar-emprestimo' emprestimo.id %}" class="btn btn-warning btn-sm">Editar</a>
-                        <a href="{% url 'excluir-emprestimo' emprestimo.id %}" class="btn btn-danger btn-sm" onclick="return confirm('Tem certeza que deseja excluir este empréstimo?');">Excluir</a>
+                        
+                        {% if 'Servidor' in request.user.groups.all|join:", " %}
+                            <a href="{% url 'editar-emprestimo' emprestimo.id %}" class="btn btn-warning btn-sm">Editar</a>
+                            <a href="{% url 'excluir-emprestimo' emprestimo.id %}" class="btn btn-danger btn-sm" onclick="return confirm('Tem certeza que deseja excluir este empréstimo?');">Excluir</a>
+                        {% endif %}
+
                         {% if not emprestimo.aluno_confirmacao %}
-                            <a href="{% url 'emprestimo-qrcode' emprestimo.id %}" class="btn btn-success btn-sm">Confirmar</a>
+                            <a href="{% url 'emprestimo-qrcode' emprestimo.id %}" class="btn btn-primary btn-sm">Confirmar Empréstimo</a>
+                        {% elif not emprestimo.confirmacao_devolucao %}
+                            {% if 'Servidor' in request.user.groups.all|join:", " %}
+                                <a href="{% url 'confirmar-devolucao' emprestimo.id %}" class="btn btn-success btn-sm">Confirmar Devolução</a>
+                            {% endif %}
                         {% endif %}
                     </td>
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="7" class="text-center">Nenhum empréstimo encontrado.</td>
+                    <td colspan="8" class="text-center">Nenhum empréstimo encontrado.</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
+    {% if 'Servidor' in request.user.groups.all|join:", " %}
     <div class="mt-4 text-end">
         <a href="{% url 'cadastrar-emprestimo' %}" class="btn btn-primary">Novo Empréstimo</a>
     </div>
+    {% endif %}
 </div>
 {% endblock %}

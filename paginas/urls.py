@@ -8,7 +8,8 @@ from .views import (
 
     EmprestimoUpdateConfirmacao,EmprestimoDetailView, MeuEmprestimoList,
     EscolherCadastroView, CadastroAlunoView, CadastroServidorView,
-    EmprestimoQRCodeView, EmprestimoConfirmarQRView
+    EmprestimoQRCodeView, EmprestimoConfirmarQRView,
+    confirmar_devolucao
 )
 # Import views do django e nossas views locais
 from django.contrib.auth import views as auth_views
@@ -68,4 +69,5 @@ urlpatterns = [
 
     path('emprestimo/<int:pk>/qrcode/', EmprestimoQRCodeView.as_view(), name='emprestimo-qrcode'),
     path('emprestimo/<int:pk>/confirmar-qr/', EmprestimoConfirmarQRView.as_view(), name='confirmar-emprestimo-qr'),
+    path('emprestimo/<int:pk>/confirmar-devolucao/', confirmar_devolucao, name='confirmar-devolucao'),
 ]

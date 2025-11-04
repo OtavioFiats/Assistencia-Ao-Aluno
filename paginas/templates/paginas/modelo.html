@@ -59,25 +59,27 @@
                 <a href="{% url "sobre" %}" class="nav-item nav-link">Sobre</a>
 
                 {% if request.user.is_authenticated %}
-                <div class="nav-item dropdown">
-                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Cadastros</a>
-                    <div class="dropdown-menu fade-down m-0">
-                        <a href="{% url "cadastrar-emprestimo" %}" class="dropdown-item">Empréstimo</a>
+                    {% if 'Servidor' in request.user.groups.all|join:", " %}
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Cadastros</a>
+                        <div class="dropdown-menu fade-down m-0">
+                            <a href="{% url "cadastrar-emprestimo" %}" class="dropdown-item">Empréstimo</a>
+                        </div>
                     </div>
-                </div>
+                    {% endif %}
 
-                <div class="nav-item dropdown">
-                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Listas</a>
-                    <div class="dropdown-menu fade-down m-0">
-                        <a href="{% url "listar-emprestimo" %}" class="dropdown-item">Empréstimo</a>
-                        <a href="{% url "listar-aluno" %}" class="dropdown-item">Aluno</a>
-                        <a href="{% url "listar-servidor" %}" class="dropdown-item">Servidor</a>
-                        {% if request.user.aluno %}
-                        <a href="{% url 'meus-emprestimos' %}" class="dropdown-item">Meus Empréstimos</a>
-                        {% endif %}
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Listas</a>
+                        <div class="dropdown-menu fade-down m-0">
+                            {% if 'Servidor' in request.user.groups.all|join:", " %}
+                                <a href="{% url "listar-emprestimo" %}" class="dropdown-item">Empréstimos</a>
+                                <a href="{% url "listar-aluno" %}" class="dropdown-item">Alunos</a>
+                                <a href="{% url "listar-servidor" %}" class="dropdown-item">Servidores</a>
+                            {% elif 'Estudante' in request.user.groups.all|join:", " %}
+                                <a href="{% url 'meus-emprestimos' %}" class="dropdown-item">Meus Empréstimos</a>
+                            {% endif %}
+                        </div>
                     </div>
-                </div>
-
                 {% endif %}
 
             </div>
