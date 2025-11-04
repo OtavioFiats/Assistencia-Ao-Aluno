@@ -63,8 +63,6 @@
                     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Cadastros</a>
                     <div class="dropdown-menu fade-down m-0">
                         <a href="{% url "cadastrar-emprestimo" %}" class="dropdown-item">Empréstimo</a>
-                        <a href="{% url "cadastrar-aluno" %}" class="dropdown-item">Aluno</a>
-                        <a href="{% url "cadastrar-servidor" %}" class="dropdown-item">Servidor</a>
                     </div>
                 </div>
 
@@ -74,7 +72,9 @@
                         <a href="{% url "listar-emprestimo" %}" class="dropdown-item">Empréstimo</a>
                         <a href="{% url "listar-aluno" %}" class="dropdown-item">Aluno</a>
                         <a href="{% url "listar-servidor" %}" class="dropdown-item">Servidor</a>
+                        {% if request.user.aluno %}
                         <a href="{% url 'meus-emprestimos' %}" class="dropdown-item">Meus Empréstimos</a>
+                        {% endif %}
                     </div>
                 </div>
 
@@ -127,7 +127,7 @@
 
 
     <!-- Categories Start -->
-    <div class="container-xxl py-5 category">
+    <div class="container-xxl py-4 category">
         <div class="container">
             <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
                 <h6 class="section-title bg-white text-center text-primary px-3">Página</h6>
@@ -221,6 +221,8 @@
 
     <!-- Template Javascript -->
     <script src="{% static "js/main.js" %}"></script>
+    <!-- Máscaras de Input -->
+    <script src="{% static "js/masks.js" %}"></script>
 </body>
 
 </html>

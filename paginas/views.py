@@ -5,6 +5,7 @@ from django.views.generic.list import ListView
 from .models import Emprestimo, Aluno, Servidor
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import logout
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 
@@ -19,6 +20,11 @@ import qrcode
 import base64
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
+
+def logout_view(request):
+    """Logout e redireciona para a página inicial."""
+    logout(request)
+    return redirect('index')
 
 # Crie a view no final do arquivo ou em outro local que faça sentido
 class CadastroAlunoView(CreateView):
@@ -218,9 +224,14 @@ class EmprestimoUpdateConfirmacao(LoginRequiredMixin, UpdateView):
 class AlunoUpdate(LoginRequiredMixin, UpdateView):
     template_name = 'paginas/form.html'
     model = Aluno
-    fields = ['ra', 'nome', 'endereco', 'fone', 'email', 'curso', 'ano', 'cpf',  'cidade', 'data_nasc']
+    form_class = None
     success_url = reverse_lazy('listar-aluno')
     extra_context = {'titulo': 'Atualização de alunos', 'botao': 'Salvar'}
+
+    def get_form_class(self):
+        # Importa localmente para evitar import cycles
+        from .forms import AlunoUpdateForm
+        return AlunoUpdateForm
   
 class ServidorUpdate(LoginRequiredMixin, UpdateView):
     template_name = 'paginas/form.html'

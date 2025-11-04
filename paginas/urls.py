@@ -10,7 +10,9 @@ from .views import (
     EscolherCadastroView, CadastroAlunoView, CadastroServidorView,
     EmprestimoQRCodeView, EmprestimoConfirmarQRView
 )
+# Import views do django e nossas views locais
 from django.contrib.auth import views as auth_views
+from . import views
 # from .views import CadastroUsuarioView
 
 urlpatterns = [
@@ -29,8 +31,8 @@ urlpatterns = [
         extra_context={'titulo': 'Atualizar Senha', 'botao': 'Salvar'}
     ), name="senha"),
 
-    # Rota para pagina de Logout
-    path("sair/", auth_views.LogoutView.as_view(), name="logout"),
+    # Rota para pagina de Logout (usa nossa view para garantir redirecionamento)
+    path("sair/", views.logout_view, name="logout"),
 
     
     path('', IndexView.as_view(), name="index"),

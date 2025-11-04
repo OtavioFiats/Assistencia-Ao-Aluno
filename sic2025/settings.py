@@ -152,7 +152,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 LOGIN_REDIRECT_URL = 'index'
 LOGIN_URL = 'login'
-LOGOUT_REDIRECT_URL = 'login'
+LOGOUT_REDIRECT_URL = 'index'
 
 # Configuração de envio de e-mail (exemplo Gmail)
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

@@ -1,33 +1,44 @@
-
+{% extends 'paginas/modelo.html' %}
 {% load static %}
-<link rel="shortcut icon" type="image/png" href="{% static 'img/logo.jpg' %}">
 
 {% block conteudo %}
+<!-- Delete Confirmation Start -->
+<div class="container-xxl py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <div class="card wow fadeInUp" data-wow-delay="0.1s">
+                    <div class="card-body text-center p-5">
+                        <h3 class="card-title text-primary mb-4">Excluir Registro</h3>
+                        
+                        <div class="alert alert-warning" role="alert">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Tem certeza que deseja excluir este registro?
+                        </div>
 
-{% block css_extra %}
-<link rel="stylesheet" href="{% static 'css/excluir.css' %}">
+                        <p class="lead mb-4">
+                            Você está prestes a excluir:<br>
+                            <strong class="text-danger">{{ object }}</strong>
+                        </p>
 
-{% endblock %}
+                        <form action="" method="POST">
+                            {% csrf_token %}
+                            {{ form.as_p }}
 
-<h3>Excluir dados</h3>
-
-<p class="lead">Deseja realmente excluir o dado?</p>
-
-<form action="" method="POST">
-
-    <p>
-        Deseja Excluir o dado: <strong>{{ object }}</strong>
-    </p>
-
-    <!-- Cria um input para validação dos dados -->
-    {% csrf_token %}
-
-    <!-- Imprime os campos do formulário (input, select, etc) em <p> diferente -->
-    {{ form.as_p }}
-
-    <!-- Botões para enviar ou cancelar -->
-    <button type="submit" class="btn btn-danger me-2">Excluir</button>
-    <a href="{% url 'menu-listas' %}" class="btn btn-secondary">Cancelar</a>
-
-</form>
+                            <div class="mt-4">
+                                <button type="submit" class="btn btn-danger py-3 px-5">
+                                    <i class="fas fa-trash-alt me-2"></i>Excluir
+                                </button>
+                                <a href="{% url 'menu-listas' %}" class="btn btn-secondary py-3 px-5 ms-2">
+                                    <i class="fas fa-times me-2"></i>Cancelar
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Delete Confirmation End -->
 {% endblock %}
