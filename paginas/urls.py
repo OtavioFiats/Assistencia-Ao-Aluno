@@ -59,6 +59,8 @@ urlpatterns = [
     path('listar/aluno/', AlunoList.as_view(), name="listar-aluno"),
     path('listar/servidor/', ServidorList.as_view(), name="listar-servidor"),
 
+    path('aluno/<int:pk>/historico/', views.HistoricoAlunoView.as_view(), name='historico-aluno'),
+
     path('detalhes/emprestimo/<int:pk>/', EmprestimoDetailView.as_view(), name="detalhes-emprestimo"),
 
     path("listar/meus-emprestimos/", MeuEmprestimoList.as_view(), name="meus-emprestimos"),

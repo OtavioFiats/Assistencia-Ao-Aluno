@@ -125,14 +125,63 @@ class CadastroServidorView(CreateView):
 
 
 
+from braces.views import GroupRequiredMixin
+from django.db.models import Count
+import json
+
 class IndexView(TemplateView):
     template_name = "paginas/index.html"
+
+    def get(self, request, *args, **kwargs):
+        # Se o usuário for um servidor, mostre o dashboard
+        if request.user.is_authenticated and request.user.groups.filter(name='Servidor').exists():
+            self.template_name = 'paginas/dashboard.html'
+            context = self.get_dashboard_context()
+            return self.render_to_response(context)
+        
+        # Para outros usuários, mostre a página inicial padrão
+        return super().get(request, *args, **kwargs)
+
+    def get_dashboard_context(self):
+        today = timezone.now().date()
+        last_30_days = today - timedelta(days=30)
+
+        # Cards
+        emprestimos_ativos = Emprestimo.objects.filter(aluno_confirmacao=True, confirmacao_devolucao=False).count()
+        emprestimos_atrasados = Emprestimo.objects.filter(aluno_confirmacao=True, confirmacao_devolucao=False, data_devolucao__lt=today).count()
+        emprestimos_pendentes = Emprestimo.objects.filter(aluno_confirmacao=False).count()
+
+        # Gráfico
+        itens_mais_emprestados = Emprestimo.objects.filter(data__gte=last_30_days) \
+            .values('descricao') \
+            .annotate(total=Count('descricao')) \
+            .order_by('-total')[:5]
+
+        chart_labels = [item['descricao'] for item in itens_mais_emprestados]
+        chart_data = [item['total'] for item in itens_mais_emprestados]
+
+        return {
+            'emprestimos_ativos': emprestimos_ativos,
+            'emprestimos_atrasados': emprestimos_atrasados,
+            'emprestimos_pendentes': emprestimos_pendentes,
+            'chart_labels': json.dumps(chart_labels),
+            'chart_data': json.dumps(chart_data),
+        }
 
 class SobreView(TemplateView):
     template_name = 'paginas/sobre.html'
 
-class MenuView(TemplateView):
+class MenuView(LoginRequiredMixin, TemplateView):
     template_name = 'paginas/menu.html'
+
+    def get(self, request, *args, **kwargs):
+        if request.user.groups.filter(name='Servidor').exists():
+            return redirect('index') # Redireciona para o dashboard (IndexView)
+        elif hasattr(request.user, 'aluno'):
+            return redirect('meus-emprestimos')
+        
+        # Fallback para outros tipos de usuários autenticados
+        return redirect('index')
 
 class MenuListasView(TemplateView):
     template_name = 'paginas/menu-listas.html'
@@ -147,6 +196,19 @@ class EmprestimoCreate(LoginRequiredMixin , CreateView):
     def get_form(self, *args, **kwargs):
         form = super().get_form(*args, **kwargs)
         form.fields['aluno'].queryset = Aluno.objects.all()
+        
+        # Configurar o campo de data com widget DateInput e data mínima
+        from datetime import date
+        today = date.today()
+        form.fields['data'].widget = forms.DateInput(attrs={
+            'type': 'date',
+            'class': 'form-control',
+            'min': today.strftime('%Y-%m-%d'),
+            'value': today.strftime('%Y-%m-%d')
+        })
+        form.fields['data'].initial = today
+        form.fields['data'].help_text = 'A data do empréstimo não pode ser anterior à data atual.'
+        
         return form
 
     def dispatch(self, request, *args, **kwargs):
@@ -259,11 +321,49 @@ class ServidorDelete(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy('listar-servidor')
 
 
+from django.db.models import Q
+from django.utils import timezone
+
+from django.db.models import Q
+
+
 class EmprestimoList(LoginRequiredMixin, ListView):
     model = Emprestimo
     template_name = "paginas/listas/emprestimo.html"
     paginate_by = 10
     context_object_name = 'emprestimos'
+
+    def get_queryset(self):
+        queryset = super().get_queryset().order_by('-data')
+        search_query = self.request.GET.get('q')
+        status_filter = self.request.GET.get('status')
+
+        if search_query:
+            queryset = queryset.filter(
+                Q(aluno__nome__icontains=search_query) |
+                Q(descricao__icontains=search_query)
+            )
+
+        if status_filter:
+            today = timezone.now().date()
+            if status_filter == 'pendente':
+                queryset = queryset.filter(aluno_confirmacao=False)
+            elif status_filter == 'aprovado':
+                queryset = queryset.filter(aluno_confirmacao=True, confirmacao_devolucao=False, data_devolucao__gte=today)
+            elif status_filter == 'atrasado':
+                queryset = queryset.filter(aluno_confirmacao=True, confirmacao_devolucao=False, data_devolucao__lt=today)
+            elif status_filter == 'devolvido':
+                queryset = queryset.filter(confirmacao_devolucao=True)
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['search_query'] = self.request.GET.get('q', '')
+        context['status_filter'] = self.request.GET.get('status', '')
+        # Passa os parâmetros de busca para a paginação
+        context['pagination_params'] = f"q={context['search_query']}&status={context['status_filter']}"
+        return context
 
 
 class MeuEmprestimoList(LoginRequiredMixin, ListView):
@@ -282,6 +382,22 @@ class AlunoList(LoginRequiredMixin, ListView):
     model = Aluno
     template_name = "paginas/listas/aluno.html"
     paginate_by = 10
+
+
+class HistoricoAlunoView(LoginRequiredMixin, ListView):
+    model = Emprestimo
+    template_name = 'paginas/listas/historico_aluno.html'
+    context_object_name = 'emprestimos'
+    paginate_by = 10
+
+    def get_queryset(self):
+        aluno_pk = self.kwargs.get('pk')
+        return Emprestimo.objects.filter(aluno__pk=aluno_pk).order_by('-data')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['aluno'] = Aluno.objects.get(pk=self.kwargs.get('pk'))
+        return context
 
 
 class ServidorList(LoginRequiredMixin, ListView):

@@ -1,66 +1,238 @@
 {% extends 'paginas/modelo.html' %}
 {% block conteudo %}
 <div class="container py-5">
-    <h2 class="mb-4">
-        {% if request.user.aluno %}
-            Meus Empréstimos
-        {% else %}
-            Lista de Empréstimos
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">
+            {% if request.user.aluno %}
+                <i class="fas fa-clipboard-list text-primary me-2"></i>Meus Empréstimos
+            {% else %}
+                <i class="fas fa-list-alt text-primary me-2"></i>Lista de Empréstimos
+            {% endif %}
+        </h2>
+        {% if request.user.servidor %}
+        <a href="{% url 'cadastrar-emprestimo' %}" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>Novo Empréstimo
+        </a>
         {% endif %}
-    </h2>
-    <div class="table-responsive">
-        <table class="table table-striped table-bordered">
+    </div>
+
+    {% if request.user.servidor %}
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+            <i class="fas fa-search me-2"></i>Filtros de Busca
+        </div>
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-5">
+                    <label class="form-label"><i class="fas fa-search me-1"></i>Buscar</label>
+                    <input type="text" name="q" class="form-control" placeholder="Digite o nome do aluno ou descrição do item..." value="{{ search_query }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label"><i class="fas fa-filter me-1"></i>Status</label>
+                    <select name="status" class="form-select">
+                        <option value="">Todos os status</option>
+                        <option value="pendente" {% if status_filter == 'pendente' %}selected{% endif %}>⏳ Pendente de Confirmação</option>
+                        <option value="aprovado" {% if status_filter == 'aprovado' %}selected{% endif %}>✅ Aprovado (Em andamento)</option>
+                        <option value="atrasado" {% if status_filter == 'atrasado' %}selected{% endif %}>⚠️ Atrasado</option>
+                        <option value="devolvido" {% if status_filter == 'devolvido' %}selected{% endif %}>✔️ Devolvido</option>
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100 me-2">
+                        <i class="fas fa-search me-1"></i>Filtrar
+                    </button>
+                    <a href="{% url 'listar-emprestimo' %}" class="btn btn-secondary">
+                        <i class="fas fa-redo"></i>
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% if search_query or status_filter %}
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle me-2"></i>
+        Exibindo resultados filtrados
+        {% if search_query %} para "<strong>{{ search_query }}</strong>"{% endif %}
+        {% if status_filter %} com status "<strong>{{ status_filter|capfirst }}</strong>"{% endif %}
+        - Total: <strong>{{ page_obj.paginator.count }}</strong> empréstimo(s)
+    </div>
+    {% endif %}
+    {% endif %}
+
+    <div class="table-responsive shadow-sm">
+        <table class="table table-hover table-bordered align-middle mb-0">
             <thead class="table-dark">
                 <tr>
-                    <th>ID</th>
+                    <th class="text-center"><i class="fas fa-hashtag me-1"></i>ID</th>
                     {% if request.user.servidor %}
-                        <th>Aluno</th>
+                        <th><i class="fas fa-user me-1"></i>Aluno</th>
                     {% endif %}
-                    <th>Descrição</th>
-                    <th>Data do Empréstimo</th>
-                    <th>Data de Devolução</th>
-                    <th>Aprovado</th>
-                    <th>Devolução Confirmada</th>
-                    <th>Ações</th>
+                    <th><i class="fas fa-box me-1"></i>Descrição</th>
+                    <th class="text-center"><i class="fas fa-calendar-plus me-1"></i>Data do Empréstimo</th>
+                    <th class="text-center"><i class="fas fa-calendar-check me-1"></i>Data de Devolução</th>
+                    <th class="text-center"><i class="fas fa-check-circle me-1"></i>Status</th>
+                    <th class="text-center"><i class="fas fa-tools me-1"></i>Ações</th>
                 </tr>
             </thead>
             <tbody>
                 {% for emprestimo in object_list %}
-                <tr>
-                    <td>{{ emprestimo.id }}</td>
-                    {% if request.user.servidor %}
-                        <td>{{ emprestimo.aluno.nome }}</td>
+                {% load static %}
+                {% now "Y-m-d" as today %}
+                <tr class="
+                    {% if not emprestimo.aluno_confirmacao %}table-warning
+                    {% elif emprestimo.confirmacao_devolucao %}table-success
+                    {% elif emprestimo.data_devolucao|date:'Y-m-d' < today %}table-danger
                     {% endif %}
-                    <td>{{ emprestimo.descricao }}</td>
-                    <td>{{ emprestimo.data|date:'d/m/Y' }}</td>
-                    <td>{{ emprestimo.data_devolucao|date:'d/m/Y' }}</td>
-                    <td>{% if emprestimo.aluno_confirmacao %}Sim{% else %}Não{% endif %}</td>
-                    <td>{% if emprestimo.confirmacao_devolucao %}Sim{% else %}Não{% endif %}</td>
-                    <td>
-                        {% if request.user.servidor %}
-                            <a href="{% url 'detalhes-emprestimo' emprestimo.id %}" class="btn btn-info btn-sm">Detalhes</a>
-                            <a href="{% url 'editar-emprestimo' emprestimo.id %}" class="btn btn-warning btn-sm">Editar</a>
-                            <a href="{% url 'excluir-emprestimo' emprestimo.id %}" class="btn btn-danger btn-sm" onclick="return confirm('Tem certeza que deseja excluir este empréstimo?');">Excluir</a>
-                            {% if emprestimo.aluno_confirmacao and not emprestimo.confirmacao_devolucao %}
-                                <a href="{% url 'confirmar-devolucao' emprestimo.id %}" class="btn btn-success btn-sm">Confirmar Devolução</a>
-                            {% endif %}
-                        {% elif request.user.aluno %}
-                            {% if not emprestimo.aluno_confirmacao %}
-                                <a href="{% url 'emprestimo-qrcode' emprestimo.id %}" class="btn btn-primary btn-sm">Confirmar Empréstimo</a>
-                            {% else %}
-                                <span class="text-muted">Nenhuma ação disponível</span>
-                            {% endif %}
+                ">
+                    <td class="text-center fw-bold">{{ emprestimo.id }}</td>
+                    {% if request.user.servidor %}
+                        <td><i class="fas fa-user-graduate text-primary me-2"></i>{{ emprestimo.aluno.nome }}</td>
+                    {% endif %}
+                    <td><i class="fas fa-tag text-secondary me-2"></i>{{ emprestimo.descricao }}</td>
+                    <td class="text-center">{{ emprestimo.data|date:'d/m/Y' }}</td>
+                    <td class="text-center">{{ emprestimo.data_devolucao|date:'d/m/Y' }}</td>
+                    <td class="text-center">
+                        {% if emprestimo.confirmacao_devolucao %}
+                            <span class="badge bg-success"><i class="fas fa-check-double me-1"></i>Devolvido</span>
+                        {% elif not emprestimo.aluno_confirmacao %}
+                            <span class="badge bg-warning text-dark"><i class="fas fa-hourglass-half me-1"></i>Pendente</span>
+                        {% elif emprestimo.data_devolucao|date:'Y-m-d' < today %}
+                            <span class="badge bg-danger"><i class="fas fa-exclamation-triangle me-1"></i>Atrasado</span>
+                        {% else %}
+                            <span class="badge bg-primary"><i class="fas fa-clipboard-check me-1"></i>Em andamento</span>
                         {% endif %}
+                    </td>
+                    <td class="text-center">
+                        <div class="btn-group btn-group-sm" role="group">
+                            {% if request.user.servidor %}
+                                <a href="{% url 'detalhes-emprestimo' emprestimo.id %}" class="btn btn-info" title="Ver Detalhes">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{% url 'editar-emprestimo' emprestimo.id %}" class="btn btn-warning" title="Editar">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                {% if emprestimo.aluno_confirmacao and not emprestimo.confirmacao_devolucao %}
+                                    <a href="{% url 'confirmar-devolucao' emprestimo.id %}" class="btn btn-success" title="Confirmar Devolução">
+                                        <i class="fas fa-check"></i>
+                                    </a>
+                                {% endif %}
+                                <a href="{% url 'excluir-emprestimo' emprestimo.id %}" class="btn btn-danger" title="Excluir" onclick="return confirm('Tem certeza que deseja excluir este empréstimo?');">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            {% elif request.user.aluno %}
+                                {% if not emprestimo.aluno_confirmacao %}
+                                    <a href="{% url 'emprestimo-qrcode' emprestimo.id %}" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-qrcode me-1"></i>Confirmar Empréstimo
+                                    </a>
+                                {% else %}
+                                    <span class="text-muted small"><i class="fas fa-check-circle me-1"></i>Confirmado</span>
+                                {% endif %}
+                            {% endif %}
+                        </div>
                     </td>
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="{% if request.user.servidor %}8{% else %}7{% endif %}" class="text-center">Nenhum empréstimo encontrado.</td>
+                    <td colspan="{% if request.user.servidor %}7{% else %}6{% endif %}" class="text-center py-5">
+                        <i class="fas fa-inbox fa-3x text-muted mb-3 d-block"></i>
+                        <h5 class="text-muted">Nenhum empréstimo encontrado</h5>
+                        {% if search_query or status_filter %}
+                            <p class="text-muted">Tente ajustar seus filtros de busca.</p>
+                            <a href="{% url 'listar-emprestimo' %}" class="btn btn-secondary">
+                                <i class="fas fa-redo me-1"></i>Limpar Filtros
+                            </a>
+                        {% else %}
+                            <p class="text-muted">Ainda não há empréstimos cadastrados no sistema.</p>
+                        {% endif %}
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
+
+    {% if is_paginated %}
+    <nav aria-label="Navegação de páginas" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1&{{ pagination_params }}" title="Primeira página">
+                        <i class="fas fa-angle-double-left"></i>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}&{{ pagination_params }}" aria-label="Anterior">
+                        <i class="fas fa-angle-left"></i>
+                    </a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link"><i class="fas fa-angle-double-left"></i></span>
+                </li>
+                <li class="page-item disabled">
+                    <span class="page-link"><i class="fas fa-angle-left"></i></span>
+                </li>
+            {% endif %}
+
+            <li class="page-item active">
+                <span class="page-link">
+                    Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+                </span>
+            </li>
+
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}&{{ pagination_params }}" aria-label="Próxima">
+                        <i class="fas fa-angle-right"></i>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}&{{ pagination_params }}" title="Última página">
+                        <i class="fas fa-angle-double-right"></i>
+                    </a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link"><i class="fas fa-angle-right"></i></span>
+                </li>
+                <li class="page-item disabled">
+                    <span class="page-link"><i class="fas fa-angle-double-right"></i></span>
+                </li>
+            {% endif %}
+        </ul>
+        <p class="text-center text-muted small">
+            <i class="fas fa-info-circle me-1"></i>
+            Exibindo {{ page_obj.start_index }} a {{ page_obj.end_index }} de {{ page_obj.paginator.count }} empréstimo(s)
+        </p>
+    </nav>
+    {% endif %}
+</div>
+
+<!-- Incluindo Font Awesome para os ícones -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+{% endblock %}
+                </li>
+            {% endif %}
+
+            <li class="page-item disabled">
+                <a class="page-link" href="#">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</a>
+            </li>
+
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}&{{ pagination_params }}" aria-label="Próxima">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}&{{ pagination_params }}">Última</a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+
     {% if request.user.servidor %}
     <div class="mt-4 text-end">
         <a href="{% url 'cadastrar-emprestimo' %}" class="btn btn-primary">Novo Empréstimo</a>

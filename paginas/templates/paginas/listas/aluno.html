@@ -36,6 +36,7 @@
                 <td>{{ aluno.cidade }}</td>
                 <td>{{ aluno.data_nasc|date:"d/m/Y" }}</td>
                 <td class="acoes">
+                    <a href="{% url 'historico-aluno' aluno.pk %}" class="btn btn-sm btn-outline-info" title="Histórico">📜</a>
                     <a href="{% url 'editar-aluno' aluno.pk %}" class="btn btn-sm btn-outline-secondary" title="Editar">✏️</a>
                     <a href="{% url 'excluir-aluno' aluno.pk %}" class="btn btn-sm btn-outline-danger" title="Excluir">🗑️</a>
                 </td>

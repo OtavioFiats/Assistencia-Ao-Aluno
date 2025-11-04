@@ -1,0 +1,126 @@
+{% extends 'paginas/modelo.html' %}
+{% load static %}
+
+{% block conteudo %}
+<div class="container-fluid py-5">
+    <h2 class="mb-4">Dashboard do Servidor</h2>
+
+    <div class="row">
+        <!-- Card Empréstimos Ativos -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Empréstimos Ativos</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ emprestimos_ativos }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                    <a href="{% url 'listar-emprestimo' %}?status=aprovado" class="stretched-link"></a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card Empréstimos Atrasados -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-danger shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                Devoluções Atrasadas</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ emprestimos_atrasados }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-calendar-times fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                     <a href="{% url 'listar-emprestimo' %}?status=atrasado" class="stretched-link"></a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card Solicitações Pendentes -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Solicitações Pendentes</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ emprestimos_pendentes }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-comments fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                    <a href="{% url 'listar-emprestimo' %}?status=pendente" class="stretched-link"></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráfico de Itens Mais Emprestados -->
+    <div class="row">
+        <div class="col-xl-8 col-lg-7">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Itens Mais Emprestados (Últimos 30 dias)</h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-bar">
+                        <canvas id="myBarChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Incluindo Font Awesome para os ícones -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+<!-- Incluindo Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Dados do gráfico injetados pelo Django
+    const labels = {{ chart_labels|safe }};
+    const data = {{ chart_data|safe }};
+
+    const ctx = document.getElementById('myBarChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Nº de Empréstimos',
+                data: data,
+                backgroundColor: 'rgba(78, 115, 223, 0.8)',
+                borderColor: 'rgba(78, 115, 223, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+});
+</script>
+{% endblock %}
