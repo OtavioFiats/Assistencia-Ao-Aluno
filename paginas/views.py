@@ -189,7 +189,7 @@ class MenuListasView(TemplateView):
 class EmprestimoCreate(LoginRequiredMixin , CreateView):
     template_name = 'paginas/form.html'
     model = Emprestimo
-    fields = ['descricao', 'data', 'aluno']
+    fields = ['descricao', 'categoria', 'data', 'aluno']
     success_url = reverse_lazy('listar-emprestimo')
     extra_context = {'titulo': 'Cadastro de Empréstimo', 'botao': 'Salvar'}
 
@@ -243,7 +243,7 @@ class ServidorCreate(LoginRequiredMixin, CreateView):
 class EmprestimoUpdate(LoginRequiredMixin, UpdateView):
     template_name = 'paginas/form.html'
     model = Emprestimo
-    fields = ['descricao', 'emprestado', 'aluno']
+    fields = ['descricao', 'categoria', 'emprestado', 'aluno']
     success_url = reverse_lazy('listar-emprestimo')
     extra_context = {'titulo': 'Atualização de Empréstimo', 'botao': 'Salvar'}
 

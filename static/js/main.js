@@ -58,8 +58,10 @@
     $(window).scroll(function () {
         if ($(this).scrollTop() > 300) {
             $('.back-to-top').fadeIn('slow');
+            $('.back-button').fadeIn('slow');
         } else {
             $('.back-to-top').fadeOut('slow');
+            $('.back-button').fadeOut('slow');
         }
     });
     $('.back-to-top').click(function () {

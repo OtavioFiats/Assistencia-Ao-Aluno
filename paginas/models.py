@@ -32,7 +32,23 @@ class Servidor(models.Model):
 
 
 class Emprestimo(models.Model):
+    CATEGORIA_CHOICES = [
+        ('material_estudo', 'Material de Estudo'),
+        ('material_esportivo', 'Material Esportivo'),
+        ('equipamento_eletronico', 'Equipamento Eletrônico'),
+        ('ferramenta', 'Ferramenta'),
+        ('livro', 'Livro'),
+        ('uniforme', 'Uniforme'),
+        ('outro', 'Outro'),
+    ]
+    
     descricao = models.CharField(max_length=250)
+    categoria = models.CharField(
+        max_length=30,
+        choices=CATEGORIA_CHOICES,
+        default='outro',
+        verbose_name='Categoria do Item'
+    )
     data = models.DateField()
     emprestado = models.BooleanField(default=True) 
 

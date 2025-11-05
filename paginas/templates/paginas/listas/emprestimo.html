@@ -69,6 +69,7 @@
                         <th><i class="fas fa-user me-1"></i>Aluno</th>
                     {% endif %}
                     <th><i class="fas fa-box me-1"></i>Descrição</th>
+                    <th class="text-center"><i class="fas fa-tag me-1"></i>Categoria</th>
                     <th class="text-center"><i class="fas fa-calendar-plus me-1"></i>Data do Empréstimo</th>
                     <th class="text-center"><i class="fas fa-calendar-check me-1"></i>Data de Devolução</th>
                     <th class="text-center"><i class="fas fa-check-circle me-1"></i>Status</th>
@@ -90,6 +91,23 @@
                         <td><i class="fas fa-user-graduate text-primary me-2"></i>{{ emprestimo.aluno.nome }}</td>
                     {% endif %}
                     <td><i class="fas fa-tag text-secondary me-2"></i>{{ emprestimo.descricao }}</td>
+                    <td class="text-center">
+                        {% if emprestimo.categoria == 'material_estudo' %}
+                            <span class="badge bg-info text-white"><i class="fas fa-book me-1"></i>Material de Estudo</span>
+                        {% elif emprestimo.categoria == 'material_esportivo' %}
+                            <span class="badge bg-success"><i class="fas fa-futbol me-1"></i>Material Esportivo</span>
+                        {% elif emprestimo.categoria == 'equipamento_eletronico' %}
+                            <span class="badge bg-primary"><i class="fas fa-laptop me-1"></i>Equipamento Eletrônico</span>
+                        {% elif emprestimo.categoria == 'ferramenta' %}
+                            <span class="badge bg-secondary"><i class="fas fa-tools me-1"></i>Ferramenta</span>
+                        {% elif emprestimo.categoria == 'livro' %}
+                            <span class="badge bg-warning text-dark"><i class="fas fa-book-open me-1"></i>Livro</span>
+                        {% elif emprestimo.categoria == 'uniforme' %}
+                            <span class="badge bg-dark"><i class="fas fa-tshirt me-1"></i>Uniforme</span>
+                        {% else %}
+                            <span class="badge bg-secondary"><i class="fas fa-box me-1"></i>Outro</span>
+                        {% endif %}
+                    </td>
                     <td class="text-center">{{ emprestimo.data|date:'d/m/Y' }}</td>
                     <td class="text-center">{{ emprestimo.data_devolucao|date:'d/m/Y' }}</td>
                     <td class="text-center">
@@ -134,7 +152,7 @@
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="{% if request.user.servidor %}7{% else %}6{% endif %}" class="text-center py-5">
+                    <td colspan="{% if request.user.servidor %}8{% else %}7{% endif %}" class="text-center py-5">
                         <i class="fas fa-inbox fa-3x text-muted mb-3 d-block"></i>
                         <h5 class="text-muted">Nenhum empréstimo encontrado</h5>
                         {% if search_query or status_filter %}

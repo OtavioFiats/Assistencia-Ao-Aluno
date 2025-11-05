@@ -46,7 +46,26 @@
     <!-- Navbar Start -->
     <nav class="navbar navbar-expand-lg bg-white navbar-light shadow sticky-top p-0">
     <a href="{% url 'index' %}" class="navbar-brand d-flex align-items-center px-4 px-lg-5">
-        <h2 class="m-0 text-primary"><i class="fa fa-book me-3"></i>Assistência Ao Aluno</h2>
+        <svg width="180" height="50" viewBox="0 0 180 50" xmlns="http://www.w3.org/2000/svg">
+            <!-- Ícone do livro -->
+            <g transform="translate(0, 5)">
+                <rect x="5" y="8" width="28" height="34" rx="2" fill="#06BBCC" opacity="0.2"/>
+                <path d="M 8 10 L 8 40 L 30 40 L 30 10 Z" fill="none" stroke="#06BBCC" stroke-width="2"/>
+                <line x1="19" y1="15" x2="19" y2="35" stroke="#06BBCC" stroke-width="2"/>
+                <circle cx="19" cy="25" r="8" fill="#06BBCC" opacity="0.3"/>
+                <path d="M 15 25 L 18 28 L 23 22" fill="none" stroke="#06BBCC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </g>
+            
+            <!-- Texto "Assistência" -->
+            <text x="42" y="22" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#06BBCC">
+                Assistência
+            </text>
+            
+            <!-- Texto "Ao Aluno" -->
+            <text x="42" y="38" font-family="Arial, sans-serif" font-size="14" font-weight="600" fill="#2C3E50">
+                Ao Aluno
+            </text>
+        </svg>
     </a>
     <button type="button" class="navbar-toggler me-4" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
         <span class="navbar-toggler-icon"></span>
@@ -99,10 +118,12 @@
     <!-- Categories Start -->
     <div class="container-xxl py-4 category">
         <div class="container">
+            {% if titulo %}
             <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
                 <h6 class="section-title bg-white text-center text-primary px-3">Página</h6>
-                <h1 class="mb-5">{{ titulo|default:"Sistema Assistência ao Aluno" }}</h1>
+                <h1 class="mb-5">{{ titulo }}</h1>
             </div>
+            {% endif %}
             {% block conteudo %}
             <div class="row g-3">
                 <div class="col-lg-7 col-md-6">
@@ -179,6 +200,11 @@
 
     <!-- Back to Top -->
     <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+
+    <!-- Back Button -->
+    <a href="javascript:history.back()" class="btn btn-lg btn-secondary btn-lg-square back-button" style="position: fixed; bottom: 90px; right: 30px; z-index: 99; display: none;">
+        <i class="bi bi-arrow-left"></i>
+    </a>
 
 
     <!-- JavaScript Libraries -->

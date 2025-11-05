@@ -1,45 +1,150 @@
+{% extends 'paginas/modelo.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="pt-br">
 
-<head>
-    <meta charset="UTF-8">
-    <title>Menu de Listas</title>
-    <link rel="shortcut icon" type="image/png" href="{% static 'img/logo.jpg' %}">
-    <link rel="stylesheet" href="{% static 'css/menudelistas.css' %}">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
+{% block conteudo %}
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h2 class="display-5 fw-bold text-primary mb-3">
+            <i class="fas fa-list-ul me-3"></i>Menu de Listas
+        </h2>
+        <p class="lead text-muted">Acesse rapidamente os registros do sistema</p>
+    </div>
 
-<body>
-    <main class="container py-5">
-        <h2 class="titulo-menu">Menu de Listas</h2>
-        <p class="subtitulo-menu">Registros</p>
-
-        <div class="card-container">
-
-            <div class="card-menu">
-                <h5>👩‍🎓 Alunos</h5>
-                <a href="{% url 'listar-aluno' %}">Ver Lista</a>
-            </div>
-
-            <div class="card-menu">
-                <h5>👨‍🏫 Servidores</h5>
-                <a href="{% url 'listar-servidor' %}">Ver Lista</a>
-            </div>
-
-            <div class="card-menu">
-                <h5>💵 Emprestimo</h5>
-                <a href="{% url 'listar-emprestimo' %}">Ver Lista</a>
-            </div>
-
-            <div class="card-menu">
-                <h5>📚 Meus Empréstimos</h5>
-                <a href="{% url 'meus-emprestimos' %}">Ver Lista</a>
+    <div class="row g-4">
+        {% if request.user.servidor %}
+        <!-- Card Alunos -->
+        <div class="col-lg-6 col-md-6">
+            <div class="card h-100 shadow-sm border-0 hover-lift">
+                <div class="card-body text-center p-5">
+                    <div class="mb-4">
+                        <i class="fas fa-user-graduate fa-4x text-primary"></i>
+                    </div>
+                    <h4 class="card-title fw-bold mb-3">Alunos</h4>
+                    <p class="card-text text-muted mb-4">
+                        Visualize e gerencie todos os alunos cadastrados no sistema
+                    </p>
+                    <a href="{% url 'listar-aluno' %}" class="btn btn-primary btn-lg w-100">
+                        <i class="fas fa-eye me-2"></i>Ver Lista de Alunos
+                    </a>
+                </div>
             </div>
         </div>
 
-        <a href="{% url 'index' %}" class="btn-voltar">&larr; Voltar ao Início</a>
-    </main>
-</body>
+        <!-- Card Servidores -->
+        <div class="col-lg-6 col-md-6">
+            <div class="card h-100 shadow-sm border-0 hover-lift">
+                <div class="card-body text-center p-5">
+                    <div class="mb-4">
+                        <i class="fas fa-user-tie fa-4x text-success"></i>
+                    </div>
+                    <h4 class="card-title fw-bold mb-3">Servidores</h4>
+                    <p class="card-text text-muted mb-4">
+                        Acesse a lista completa de servidores cadastrados
+                    </p>
+                    <a href="{% url 'listar-servidor' %}" class="btn btn-success btn-lg w-100">
+                        <i class="fas fa-eye me-2"></i>Ver Lista de Servidores
+                    </a>
+                </div>
+            </div>
+        </div>
 
-</html>
+        <!-- Card Empréstimos -->
+        <div class="col-lg-6 col-md-6">
+            <div class="card h-100 shadow-sm border-0 hover-lift">
+                <div class="card-body text-center p-5">
+                    <div class="mb-4">
+                        <i class="fas fa-handshake fa-4x text-warning"></i>
+                    </div>
+                    <h4 class="card-title fw-bold mb-3">Empréstimos</h4>
+                    <p class="card-text text-muted mb-4">
+                        Gerencie todos os empréstimos registrados no sistema
+                    </p>
+                    <a href="{% url 'listar-emprestimo' %}" class="btn btn-warning btn-lg w-100 text-white">
+                        <i class="fas fa-list me-2"></i>Ver Lista de Empréstimos
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if request.user.aluno %}
+        <!-- Card Meus Empréstimos (para alunos) -->
+        <div class="col-lg-6 col-md-6">
+            <div class="card h-100 shadow-sm border-0 hover-lift">
+                <div class="card-body text-center p-5">
+                    <div class="mb-4">
+                        <i class="fas fa-book-reader fa-4x text-info"></i>
+                    </div>
+                    <h4 class="card-title fw-bold mb-3">Meus Empréstimos</h4>
+                    <p class="card-text text-muted mb-4">
+                        Acompanhe seus empréstimos ativos e histórico
+                    </p>
+                    <a href="{% url 'meus-emprestimos' %}" class="btn btn-info btn-lg w-100 text-white">
+                        <i class="fas fa-clipboard-list me-2"></i>Ver Meus Empréstimos
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Card Novo Empréstimo (apenas servidores) -->
+        {% if request.user.servidor %}
+        <div class="col-lg-6 col-md-6">
+            <div class="card h-100 shadow-sm border-0 hover-lift bg-gradient-primary">
+                <div class="card-body text-center p-5 text-white">
+                    <div class="mb-4">
+                        <i class="fas fa-plus-circle fa-4x"></i>
+                    </div>
+                    <h4 class="card-title fw-bold mb-3">Novo Empréstimo</h4>
+                    <p class="card-text mb-4">
+                        Cadastre um novo empréstimo de item para um aluno
+                    </p>
+                    <a href="{% url 'cadastrar-emprestimo' %}" class="btn btn-light btn-lg w-100">
+                        <i class="fas fa-plus me-2"></i>Cadastrar Empréstimo
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Botão Voltar -->
+    <div class="text-center mt-5">
+        <a href="{% url 'index' %}" class="btn btn-outline-secondary btn-lg">
+            <i class="fas fa-arrow-left me-2"></i>Voltar ao Início
+        </a>
+    </div>
+</div>
+
+<!-- Incluindo Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+<!-- CSS Customizado para efeitos hover -->
+<style>
+.hover-lift {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2) !important;
+}
+
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.card {
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.btn-lg {
+    padding: 12px 30px;
+    border-radius: 25px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+</style>
+{% endblock %}
